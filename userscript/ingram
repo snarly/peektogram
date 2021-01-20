@@ -1,0 +1,161 @@
+// ==UserScript==
+// @name         ingram
+// @namespace    ingram
+// @version      20210102
+// @author       Snarl
+// @description  Get Instagram profile picture in HD
+// @match        https://i.instagram.com/api/v1/*
+// @match        http://i.instagram.com/api/v1/*
+// @grant        none
+// @run-at       document-start
+// ==/UserScript==
+
+
+(function(){
+
+var xhr0
+var xhr = xhr0 = new XMLHttpRequest()
+xhr.id = window.location.href.split('https://i.instagram.com/api/v1/users/')[1];
+if (xhr.id) {
+  xhr.id = xhr.id.split('/')[0]
+  if (!isNaN(1 * xhr.id)) xhr.id = (1 * xhr.id)
+}
+if (isNaN(xhr.id)) xhr.div = 'There is no instagram user with ID "' + xhr.id + '"!'
+
+
+
+window.scrape = function(start_id) {
+
+
+function clone(obj) {
+    var copy
+
+    // Handle the 3 simple types, and null or undefined
+    if (null == obj || "object" != typeof obj) return obj
+
+    // Handle Date
+    if (obj instanceof Date) {
+        copy = new Date()
+        copy.setTime(obj.getTime())
+        return copy
+    }
+
+    // Handle Array
+    if (obj instanceof Array) {
+        copy = []
+        for (var i = 0, len = obj.length; i < len; i++) {
+            copy[i] = clone(obj[i])
+        }
+        return copy
+    }
+
+    // Handle Object
+    if (obj instanceof Object) {
+        copy = {}
+        for (var attr in obj) {
+            if (obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr])
+        }
+        return copy
+    }
+
+    alert("Unable to copy obj! Its type isn't supported.")
+}
+
+var id
+
+window.orsc = function() {console.log(this.status)
+  if (this.readyState == 4 && this.status == 200 && this.responseText) try {
+    var z = JSON.parse(this.responseText); console.log(z)
+    if (z) {
+      z = z.user
+      if (z) {
+        this.div = ''
+        var i, pics
+        if (z.hd_profile_pic_versions && z.hd_profile_pic_versions.length) {
+          pics = z.hd_profile_pic_versions
+        } else {
+            pics = []; pics[0] = {}; pics[0].url = z.profile_pic_url; pics[0].height = 150;
+          }
+        for (i=0;i < pics.length;i++) {
+          id = z.username + '_profile_pic_' + pics[i].height; console.log(z.username + ' : ' + z.pk); console.log(pics[i].url)
+          this.div = this.div + '<a href="#" onclick="window.open(&quot;' + pics[i].url + '&quot;, &quot;_blank&quot;).focus(); return false">'+ id +'</a><br>';
+        }; console.log(z)
+        if (z.hd_profile_pic_url_info && z.hd_profile_pic_url_info.url) {
+          this.div = this.div + '<a href="#" onclick="window.open(&quot;' + z.hd_profile_pic_url_info.url +'&quot;, &quot;_blank&quot;).focus(); return false">'+ z.username + '_profile_pic_hd</a><br>';
+        } else {
+            var c = '<br><div>To get the profile picture in its original size<br>'+
+                    '<li>you have to be logged in to Instagram :(</li>'
+            if (typeof InstallTrigger !== 'undefined') {
+              this.div = c + this.div // Firefox-based browsers don't need anything more
+            } else {
+                this.div = c + '<li><a href="https://chrome.google.com/webstore/detail/user-agent-switcher-and-m/bhchdcejhohfmigjafbampogmaanbfkg" style="display: inline-block">use this extension</a> to temporarily add the substring "<div style="color: red; display: inline-block">Instagram 1.1.1</div>" to the User-Agent string, then reset it once you have the picture in higher resolution.</li></div><br>' + xhr.div;
+              }
+          }
+      }
+    }
+  } catch(e) { console.log(e);
+      this.div = 'Site redirects to login page. Anonymous access not possible from this IP at this time.'
+      var a = document.createElement('div'); a.id = 'pics'
+      try {
+        document.getElementById('react-root').firstElementChild.firstElementChild.nextSibling.firstChild.firstChild.appendChild(a)
+      } catch(e){ document.getElementsByTagName('body')[0].appendChild(a) }
+      a.innerHTML = this.div; this.id = this.end_id
+    }
+
+  if (this.status == 404) this.div = 'There is no instagram user with ID "' + this.id + '"!'
+  if (this.status >= 500) this.div = 'Instagram internal server error (Error code: ' + this.status +')'
+
+  var show_message = function() {console.log(window.orsc)
+    if (xhr.status == 429) {
+      try { var z = JSON.parse(xhr.responseText) } catch(e){}; console.log(z)
+      if (z && z.spam) xhr.div = 'Your IP address is currently marked for spamming behaviour.'
+    }
+    try {
+      var a = document.getElementById('react-root').firstElementChild.firstElementChild.nextSibling.firstChild.firstChild
+    } catch(e){ a = document.getElementsByTagName('body')[0] }
+    var b = document.createElement('div'); a.id = 'ig_pics'
+    a.appendChild(b); b.innerHTML = xhr.div
+  }
+
+  window.onload = show_message
+
+  if (this.status >= 500) { show_message() }
+  if (this.id < this.end_id) {
+    id = (clone(this.id) + 1)
+    var end_id = clone(this.end_id)
+    xhr = new XMLHttpRequest(); console.log((this == xhr))
+    xhr.id = id
+    xhr.end_id = end_id
+    xhr.open('GET', 'https://i.instagram.com/api/v1/users/' + id + '/info/', true)
+    xhr.setRequestHeader('User-Agent', 'Instagram 1.1.1')
+    xhr.setRequestHeader('Access-Control-Allow-Origin', 'https://i.instagram.com')
+    xhr.onreadystatechange = window.orsc
+    setTimeout(function(){ xhr.send('') }, 3000)
+  }
+
+}
+
+
+if (start_id) xhr.id = start_id
+xhr.end_id = (start_id) ? (start_id + 10) : clone(xhr.id);
+
+
+xhr.open('GET', 'https://i.instagram.com/api/v1/users/' + xhr.id + '/info/', true)
+xhr.setRequestHeader('User-Agent', 'Instagram 1.1.1')
+xhr.setRequestHeader('Access-Control-Allow-Origin', 'https://i.instagram.com')
+//xhr.setRequestHeader('Access-Control-Allow-Headers','true')
+//xhr.setRequestHeader('Access-Control-Allow-Credentials', 'true')
+//xhr.setRequestHeader('Referer', 'https://i.instagram.com/api/v1/')
+//xhr.setRequestHeader('x-csrftoken', 'rrdoWpY1JU0581okNw3o5yaIraw7WDuE')
+//xhr.setRequestHeader('Bearer', 'CTHC8hPDpq8AGK0AR4LOLAAxeUoXc3Bx')
+//xhr.setRequestHeader('x-requested-with', 'XMLHttpRequest')
+//xhr.setRequestHeader('Authority', 'i.instagram.com')
+xhr.onreadystatechange = window.orsc
+xhr.send('')
+
+
+};
+
+  window.scrape()
+
+})();
