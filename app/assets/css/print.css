@@ -1,0 +1,131 @@
+/***** STYLES FOR PRINT *****/
+@media print {
+    @page {size: A4 portrait; }
+    img { height: 100%; margin: 0; padding: 0;max-height:100%; max-width:100% }
+
+    .print-only-photo div,
+    .print-only-photo span,
+    .print-only-photo p,
+    .print-only-photo button,
+    .print-only-photo a {
+        display: none !important;
+    }
+
+    .print-only-photo > .wrapper{
+        display: block !important;
+    }
+    .print-only-photo > .wrapper > .content{
+        display: block !important;
+    }
+    .print-only-photo > .wrapper > .content > .photo-wrapper{
+        display: block !important;
+    }
+    .print-only-photo > .wrapper > .content > .photo-wrapper > .single-photo-wrapper{
+        display: block !important;
+    }
+    .print-only-photo > .wrapper > .content > .photo-wrapper > .single-photo-wrapper > .single-photo{
+        display: block !important;
+    }
+    .print-only-photo > .wrapper > .content > .photo-wrapper > .single-photo-wrapper > .single-photo > img{
+        display: block !important;
+    }
+
+
+
+    .print-only-carousel div,
+    .print-only-carousel span,
+    .print-only-carousel p,
+    .print-only-carousel button,
+    .print-only-carousel a {
+        display: none !important;
+    }
+
+    .print-only-carousel > .wrapper{
+        display: block !important;
+    }
+    .print-only-carousel > .wrapper > .content{
+        display: block !important;
+    }
+    .print-only-carousel > .wrapper > .content > .photo-wrapper{
+        display: block !important;
+    }
+    .print-only-carousel > .wrapper > .content > .photo-wrapper > .single-photo-wrapper{
+        display: block !important;
+    }
+    .print-only-carousel > .wrapper > .content > .photo-wrapper > .single-photo-wrapper > .single-photo{
+        display: block !important;
+    }
+    .print-only-carousel > .wrapper > .content > .photo-wrapper > .single-photo-wrapper > .single-photo > .owl-stage-outer{
+        display: block !important;
+    }
+
+    .print-only-carousel > .wrapper > .content > .photo-wrapper > .single-photo-wrapper > .single-photo > .owl-stage-outer > .owl-stage{
+        display: block !important;
+    }
+
+    .print-only-carousel > .wrapper > .content > .photo-wrapper > .single-photo-wrapper > .single-photo > .owl-stage-outer > .owl-stage > .owl-item.active {
+        display: block !important;
+    }
+
+    .print-only-carousel > .wrapper > .content > .photo-wrapper > .single-photo-wrapper > .single-photo > .owl-stage-outer > .owl-stage > .owl-item.active > .item {
+        display: block !important;
+    }
+
+    .print-only-carousel > .wrapper > .content > .photo-wrapper > .single-photo-wrapper > .single-photo > .owl-stage-outer > .owl-stage > .owl-item.active > .item > img {
+        display: block !important;
+    }
+
+
+
+
+
+    .print-only-video div,
+    .print-only-video span,
+    .print-only-video p,
+    .print-only-video button,
+    .print-only-video a {
+        display: none !important;
+    }
+
+    .print-only-video > .wrapper{
+        display: block !important;
+    }
+    .print-only-video > .wrapper > .content{
+        display: block !important;
+    }
+    .print-only-video > .wrapper > .content > .photo-wrapper{
+        display: block !important;
+    }
+    .print-only-video > .wrapper > .content > .photo-wrapper > .single-photo-wrapper{
+        display: block !important;
+    }
+    .print-only-video > .wrapper > .content > .photo-wrapper > .single-photo-wrapper > .single-photo{
+        display: block !important;
+    }
+    .print-only-video > .wrapper > .content > .photo-wrapper > .single-photo-wrapper > .single-photo > .plyr--video{
+        display: block !important;
+    }
+    .print-only-video > .wrapper > .content > .photo-wrapper > .single-photo-wrapper > .single-photo > .plyr--video > .plyr__video-wrapper{
+        display: block !important;
+    }
+    .print-only-video > .wrapper > .content > .photo-wrapper > .single-photo-wrapper > .single-photo > .plyr--video > .plyr__video-wrapper > video{
+        display: block !important;
+    }
+
+
+
+
+
+    .print-only-photo-box div,
+    .print-only-photo-box span,
+    .print-only-photo-box p,
+    .print-only-photo-box button,
+    .print-only-photo-box a {
+        display: none !important;
+    }
+
+    .print-only-photo-box > .photo-wrapper-print{
+        display: block !important;
+    }
+}
+
