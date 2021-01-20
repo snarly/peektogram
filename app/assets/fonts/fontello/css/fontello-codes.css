@@ -1,0 +1,21 @@
+
+.icon-heart:before { content: '\e800'; } /* 'î €' */
+.icon-chat:before { content: '\e801'; } /* 'î ' */
+.icon-search:before { content: '\e802'; } /* 'î ‚' */
+.icon-tag:before { content: '\e803'; } /* 'î ƒ' */
+.icon-play-circled2:before { content: '\e804'; } /* 'î „' */
+.icon-play:before { content: '\e805'; } /* 'î …' */
+.icon-forward:before { content: '\e806'; } /* 'î †' */
+.icon-cancel:before { content: '\e807'; } /* 'î ‡' */
+.icon-resize-full:before { content: '\e808'; } /* 'î ˆ' */
+.icon-globe-alt:before { content: '\e809'; } /* 'î ‰' */
+.icon-up-open:before { content: '\e80a'; } /* 'î Š' */
+.icon-thumbs-up-alt:before { content: '\f164'; } /* 'ï…¤' */
+.icon-twitter:before { content: '\f309'; } /* 'ïŒ‰' */
+.icon-twitter-circled:before { content: '\f30a'; } /* 'ïŒŠ' */
+.icon-facebook:before { content: '\f30c'; } /* 'ïŒŒ' */
+.icon-facebook-circled:before { content: '\f30d'; } /* 'ïŒ' */
+.icon-gplus:before { content: '\f30f'; } /* 'ïŒ' */
+.icon-gplus-circled:before { content: '\f310'; } /* 'ïŒ' */
+.icon-pinterest:before { content: '\f312'; } /* 'ïŒ’' */
+.icon-pinterest-circled:before { content: '\f313'; } /* 'ïŒ“' */
