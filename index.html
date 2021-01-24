@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Instagram profile with posts and stories - Picuki.com</title><!---->
+    <title>Instagram profile with posts and stories - Peektogram</title><!---->
     
-        <meta name="description" content="Explore @ Instagram profile with posts and stories - Picuki.com"><!---->
-        <meta property="og:title" content="@ Instagram profile with posts and stories - Picuki.com" /> <!---->
+        <meta name="description" content="Explore @ Instagram profile with posts and stories - Peektogram"><!---->
+        <meta property="og:title" content="@ Instagram profile with posts and stories - Peektogram" /> <!---->
 
-        <meta property="og:description" content="Explore @ Instagram profile with posts and stories - Picuki.com" /> <!---->
+        <meta property="og:description" content="Explore @ Instagram profile with posts and stories - Peektogram" /> <!---->
         
         
         <meta property="og:image" content="" /><!---->
@@ -132,7 +132,11 @@
 		 - and the number of followings<br>
 		are all limited to various extent. Once a limit is exceeded, further anonymous queries of the given type sent from the same IP address will be rejected by Instagram for an unknown period of time (ranging from hours to days). These rate limits have been set extremely low since around the ides of January 2021.
 		<br><br>
-		Occasionally, the very basic search feature would end up disabled as well, which would render this tool almost entirely useless as long as the block persists. Except maybe if you happen to know the exact username / user-ID combo to the profile you wish to visit -- in which case type the username followed by a forward slash, then the numeric ID in order to skip the search and jump directly to the profile page. If anything is out of order, there are links to 3 different websites to try to view the desired page through them.
+		Occasionally, the very basic search feature would end up disabled as well, rendering this tool almost entirely useless as long as the block persists. Except maybe if you happen to know the exact username / user-ID combo to the profile you wish to visit, in which case you should type the username, followed by a forward slash and the numeric ID, at the search bar, in order to jump directly to the profile page.
+		<br><br>
+		If you want to navigate on this site through the browser's address bar, keep in mind that <u><b><strong>for Chromium-based browsers</strong></b></u> you will have to explicitly type out the protocol (https://) in front of the address every single time, otherwise these browsers would perform a web search rather than refreshing the page with the new content. The hash (#) on the URL-line is what's causing this behavior -- tha hash sign is used to differentiate between the various type of contents as the very same html page is getting re-read and subsequently re-composed via javascript.
+		<br><br>
+		If anything is out of order, there are links to 3 different websites to try to view the desired page through them.
 		<br><br>
 		--------
 		<br><br>
@@ -341,7 +345,7 @@ window.unhide()
 
 
 	var s = 'Instagram search results '
-	var new_title = search_input + ' ' + s + '- Picuki.com'
+	var new_title = search_input + ' ' + s + '- Peektogram'
 	var description = s + 'for ' + search_input
 	$('meta[name="description"]').attr('content', description)
 	$('meta[property="og:title"]').attr('content', new_title)
@@ -642,7 +646,7 @@ if (window.page == 'location') {
     (function(){
 	var s = 'Instagram posts '
 	var l = decodeURIComponent(window.pd.data_location_name) //localStorage.getItem('location-subtitle')
-	var new_title = l + ' ' + s + '- Picuki.com'
+	var new_title = l + ' ' + s + '- Peektogram'
 	var description = 'Explore ' + s + 'by ' + l
 	$('meta[name="description"]').attr('content', description)
 	$('meta[property="og:title"]').attr('content', new_title)
@@ -659,7 +663,7 @@ if (window.page == 'tag') {
     (function(){
 	var s = 'Instagram posts '
 	var t = window.location.href.split('#')[2] || window.pd.tag_name || localStorage.getItem('tag-name')
-	var new_title = t + ' ' + s + '- Picuki.com'
+	var new_title = t + ' ' + s + '- Peektogram'
 	var description = 'Explore ' + s + 'for tag ' + t
 	$('meta[name="description"]').attr('content', description)
 	$('meta[property="og:title"]').attr('content', new_title)
@@ -679,7 +683,7 @@ if (window.page == 'media') {
     (function(){
 	var s = 'Instagram post '
 	var u = window.pd.user_name //localStorage.getItem('user-name')
-	var new_title = 'Added by @' + u + ' ' + s + '- Picuki.com'
+	var new_title = 'Added by @' + u + ' ' + s + '- Peektogram'
 	var description = s + 'added by ' + u
 	$('meta[name="description"]').attr('content', description)
 	$('meta[property="og:title"]').attr('content', new_title)
