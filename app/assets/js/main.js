@@ -291,7 +291,7 @@ function createMedia(id, img, likes, comments, caption, caption_mormal, time, me
         // }
     }
     if (username != '') {
-        user_url = '<a class="load-profile" data-username="' + username + '" href="' + site_url.substring(0,site_url.length-1) + '#profile#' + username + '">@' + username + '</a>';
+        user_url = '<a class="load-profile" data-username="' + username + '" href="' + site_url.substring(0,site_url.length-1) + '#profile#' + username + '" ' + ( (username.indexOf('/') == 0) ? 'onclick="$(&quot;#searchform&quot;).find(&quot;#search-input&quot;).attr(&quot;value&quot;, &quot;'+ username +'&quot;); window.search(); return false;"' : '') +'>@' + username + '</a>';
     }
     if ($.isEmptyObject(location) === false) {
         location_url = '<span class="icon-globe-alt"><a href="' + site_url.substring(0,site_url.length-1) + '#location#' + (location.slug ? location.slug : location.name)  + '#' + location.id + '" onclick="localStorage.setItem(&quot;data-location-id&quot;, &quot;'+ location.id + '&quot;); localStorage.setItem(&quot;data-location-name&quot;, &quot;'+ location.name + '&quot;);">' + location.name + '</a></span>';
@@ -1732,7 +1732,7 @@ $(document).ready(function () {
     function loadMoreTag() {
         $('.load-more-wrapper').css('opacity', 1); if (!window.next1) { var Next = next } else { var Next = ''; delete window.next1 }
 
-	function tagged_media(data) {
+	function tagged_media(data) {console.log(data)
 
             data = data.data
             if ($.isEmptyObject(data.hashtag.edge_hashtag_to_media.edges) === true) {
@@ -1756,12 +1756,14 @@ $(document).ready(function () {
 			display_resources = '',
                         caption_mormal = '';
 		    if ($.isEmptyObject(item['node'].id) == false) id = item['node'].id;
-		    if ($.isEmptyObject(item['node'].short_code) == false) short_code = item['node'].shortcode;
+		    if ($.isEmptyObject(item['node'].shortcode) == false) short_code = item['node'].shortcode;
+		    if ($.isEmptyObject(item['node'].owner) == false) username = '/'+ item['node'].owner.id;
                     if ($.isEmptyObject(item['node'].location) == false) location = item['node'].location;
 		    if ($.isEmptyObject(item['node'].thumbnail_resources[3]) == false) img = item['node'].thumbnail_resources[3].src;
-                    if (item['node'].display_resources && $.isEmptyObject(item['node'].display_resources[0]) == false)
-		      for (var i=0; i < item['node'].display_resources.length; i++)
-			display_resources = display_resources + item['node'].display_resources[i].src +'#'+ item['node'].display_resources[i].config_width +'x'+ item['node'].display_resources[i].config_height +';'
+                    //if (item['node'].display_resources && $.isEmptyObject(item['node'].display_resources[0]) == false)
+		    if ($.isEmptyObject(item['node'].display_url) == false)
+		      for (var i=0; i < item['node'].thumbnail_resources.length; i++)
+			display_resources = display_resources + item['node'].display_url +'#'+ item['node'].dimensions.width +'x'+ item['node'].dimensions.height +';'
 		    if ($.isEmptyObject(item['node'].edge_media_preview_like) == false) likes = item['node'].edge_media_preview_like.count;
 		    if ($.isEmptyObject(item['node'].edge_media_to_comment) == false) comments = item['node'].edge_media_to_comment.count;
 		    if ($.isEmptyObject(item['node'].edge_media_to_caption.edges[0]) == false) {
@@ -1883,6 +1885,62 @@ $(document).ready(function () {
             let mediaNum = 0;	    //$('.profile_avatar').find('img').src = data2.user.profile_pic_url;
             let medias = obj.edges;
             if ($.isEmptyObject(medias) === false) {
+
+
+		if (medias[0] && medias[0]['node'] && medias[0]['node'].shortcode) {
+
+		   function update_basic_info(username, uid) {
+			$('.load-profile').html('@' + username)
+			$("a[data-username='"+ _username +"']" ).attr('data-username', username)
+			var all = document.getElementsByTagName("*"); for (var i=0; i < all.length; i++) {//document.querySelectorAll('*').forEach(function(node) {
+			  var z = all[i]
+			  if (typeof z.getAttribute == 'function' && typeof z.getAttribute('href') == 'string' && z.getAttribute('href').indexOf('#'+ _username) > -1) z.setAttribute('href', z.getAttribute('href').replace('#'+ _username, '#'+ username));//$("a:contains('#"+ _username +"')").attr('href', username)
+			}//);
+			window.ig_data.id = uid
+			window.ig_data.username = username
+			_username = username
+		  }
+
+		  if (window.ig_data && (typeof window.ig_data.followers != 'number' || !window.ig_data.profile_pic || !window.ig_data.full_name))
+		  $.getJSON('https://www.instagram.com/p/' + medias[0]['node'].shortcode + '/?__a=1', function(data1) { //console.log(data1)
+		    try {
+		      var d = data1.graphql.shortcode_media;
+		      window.ig_data.followers = d.owner.edge_followed_by.count
+		      window.ig_data.full_name = d.owner.full_name
+		      window.ig_data.profile_pic = d.owner.profile_pic_url
+		      window.ig_data.verified = d.owner.is_verified
+		      if (_username != d.owner.username) {
+			update_basic_info(d.owner.username, d.owner.id)
+			var z = ['search-username','search-id','search-full_name','search-profile_pic','search-profile_pic_hd','search-verified'], i
+			for (i=0; i<z.length; i++) {
+			  if (z[i] != 'search-profile_pic_hd') {
+			    sessionStorage.setItem(z[i], d.owner[z[i].replace('search-','').replace('profile_pic','profile_pic_url')])
+			    localStorage.setItem(z[i], d.owner[z[i].replace('search-','').replace('profile_pic','profile_pic_url')])
+			  } else {
+			      sessionStorage.setItem(z[i], 'https://i.instagram.com/api/v1/users/' + d.owner.id + '/info/')
+			      localnStorage.setItem(z[i], 'https://i.instagram.com/api/v1/users/' + d.owner.id + '/info/')
+			    }
+			}
+		      }
+		    } catch(e){}
+
+		    update_page_elements()
+
+		  }).error(function(jqXHR, textStatus, errorThrown) { // Instagram can redirect to the login page here too, instead of serving the json for the latest media
+		    //console.log(jqXHR); console.log(textStatus); console.log(errorThrown)
+		    if ( medias[0] && medias[0]['node'] && _username != medias[0]['node'].owner.username) {
+			update_basic_info(medias[0]['node'].owner.username, id)
+			var z = ['search-username','search-id'], i
+			for (i=0; i<z.length; i++) {
+			    sessionStorage.setItem(z[i], medias[0]['node'].owner[z[i].replace('search-','')])
+			    localStorage.setItem(z[i], medias[0]['node'].owner[z[i].replace('search-','')])
+			}
+			update_page_elements()
+		    }
+		  })
+
+		} else get_followers_count()
+
                 $.each(medias, function(i, item) {
                     mediaNum++;
                     let id = '',
@@ -1898,26 +1956,33 @@ $(document).ready(function () {
                         caption_mormal = '';
                     if ($.isEmptyObject(item['node'].id) == false) id = item['node'].id;
                     if ($.isEmptyObject(item['node'].shortcode) == false) short_code = item['node'].shortcode;
+		    if (window.page != 'profile' && $.isEmptyObject(item['node'].owner) == false) username = '/'+ item['node'].owner.id;
                     if ($.isEmptyObject(item['node'].location) == false) location = item['node'].location;
 		    if ($.isEmptyObject(item['node'].thumbnail_resources[3]) == false) img = item['node'].thumbnail_resources[3].src;
-                    if (item['node'].display_resources && $.isEmptyObject(item['node'].display_resources[0]) == false) {
-		      for (var i=0; i < item['node'].display_resources.length; i++) {
-			display_resources = display_resources + item['node'].display_resources[i].src +'#'+ item['node'].display_resources[i].config_width +'x'+ item['node'].display_resources[i].config_height +';'
-		      }
-		      if ($.isEmptyObject(item['node'].edge_sidecar_to_children) == false) {
-			var sc = item['node'].edge_sidecar_to_children.edges, i
-			for (i=1; i < sc.length; i++) {
-			  if ($.isEmptyObject(sc[i].node.display_resources[0]) == false) {
-			    display_resources = display_resources + '###'
-			    var scdr = sc[i].node.display_resources, j
-			    for (j=0; j < scdr.length; j++) {
-			      display_resources = display_resources + scdr[j].src +'#'+ scdr[j].config_width +'x'+ scdr[j].config_height +';'
-			      if (j==0) img = img +';'+ scdr[j].src
+		    if (window.page != 'location') {
+		      if (item['node'].display_resources && $.isEmptyObject(item['node'].display_resources[0]) == false) {
+			for (var i=0; i < item['node'].display_resources.length; i++) {
+			  display_resources = display_resources + item['node'].display_resources[i].src +'#'+ item['node'].display_resources[i].config_width +'x'+ item['node'].display_resources[i].config_height +';'
+			}
+			if ($.isEmptyObject(item['node'].edge_sidecar_to_children) == false) {
+			  var sc = item['node'].edge_sidecar_to_children.edges, i
+			  for (i=1; i < sc.length; i++) {
+			    if ($.isEmptyObject(sc[i].node.display_resources[0]) == false) {
+			      display_resources = display_resources + '###'
+			      var scdr = sc[i].node.display_resources, j
+			      for (j=0; j < scdr.length; j++) {
+				display_resources = display_resources + scdr[j].src +'#'+ scdr[j].config_width +'x'+ scdr[j].config_height +';'
+				if (j==0) img = img +';'+ scdr[j].src
+			      }
 			    }
 			  }
 			}
 		      }
-		    }
+		    } else {
+			if ($.isEmptyObject(item['node'].display_url) == false)
+			  for (var i=0; i < item['node'].thumbnail_resources.length; i++)
+			  display_resources = display_resources + item['node'].display_url +'#'+ item['node'].dimensions.width +'x'+ item['node'].dimensions.height +';'
+			}
                     if ($.isEmptyObject(item['node'].edge_media_preview_like) == false) likes = item['node'].edge_media_preview_like.count;
                     if ($.isEmptyObject(item['node'].edge_media_to_comment) == false) comments = item['node'].edge_media_to_comment.count;
                     if ($.isEmptyObject(item['node'].edge_media_to_caption.edges[0]) == false) {
@@ -1945,26 +2010,6 @@ $(document).ready(function () {
                 } else {
                     next = null;
                 }
-
-		if (medias[0] && medias[0]['node'] && medias[0]['node'].shortcode) {
-
-		  if (typeof window.ig_data.followers != 'number' || !window.ig_data.profile_pic || !window.ig_data.full_name)
-		  $.getJSON('https://www.instagram.com/p/' + medias[0]['node'].shortcode + '/?__a=1', function(data) { //console.log(data0)
-		    try {
-		      var d = data.graphql.shortcode_media;
-		      window.ig_data.followers = d.owner.edge_followed_by.count
-		      window.ig_data.full_name = d.owner.full_name
-		      window.ig_data.profile_pic = d.owner.profile_pic_url
-		      window.ig_data.verified = d.owner.is_verified
-		    } catch(e){}
-
-		    update_page_elements()
-
-		  }).error(function(jqXHR, textStatus, errorThrown) {
-		    //console.log(jqXHR); console.log(textStatus); console.log(errorThrown)
-		  })
-
-		} else get_followers_count()
 
                 $('.load-more-wrapper').css('opacity', 0);
 
