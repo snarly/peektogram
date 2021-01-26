@@ -78,7 +78,7 @@
 <script src="/peektogram/app/assets/js/isotope.pkgd.min.js"></script>
 <script src="/peektogram/app/assets/js/infinite-scroll.pkgd.js"></script>
 <script src="/peektogram/app/assets/js/imagesloaded.pkgd.min.js"></script>
-<script src="/peektogram/app/assets/libs/adblock.js"></script>
+<!--script src="/peektogram/app/assets/libs/adblock.js"></script-->
 <script src="/peektogram/app/assets/js/main.js"></script><!--?v=1609034678-->
 
 <script src="/peektogram/app/assets/libs/nude/nude.min.js"></script><!--?v=5-->
@@ -118,7 +118,7 @@
 	    <p>
 		A self-contained Instagram browser tool providing anonymous access to the site (when possible).
 		<br><br>
-		Since no authentication is taking place, some features will be limited or missing compared to Instagram's own interface. For instance, only logged-in users on the Instagram domain and certified Instagram apps are granted access to the following data<br>
+		Since no user authentication is taking place, some features will be limited or missing compared to Instagram's own interface. For instance, only logged-in users on the Instagram domain and certified Instagram apps are granted access to the following data<br>
 		 - list of followers<br>
 		 - list of followed users<br>
 		 - list of post-likers<br>
@@ -132,7 +132,7 @@
 		 - and the number of followings<br>
 		are all limited to various extent. Once a limit is exceeded, further anonymous queries of the given type sent from the same IP address will be rejected by Instagram for an unknown period of time (ranging from hours to days). These rate limits have been set extremely low since around the ides of January 2021.
 		<br><br>
-		Occasionally, the very basic search feature would end up disabled as well, rendering this tool almost entirely useless as long as the block persists. Except maybe if you happen to know the exact username / user-ID combo to the profile you wish to visit, in which case you should type the username, followed by a forward slash and the numeric ID, at the search bar, in order to jump directly to the profile page.
+		Occasionally -- and for certain areas / IP addresses permanently -- the very basic anonymous search feature would end up disabled as well, rendering this tool almost entirely useless as long as the block persists for the IP. Except maybe if you happen to know the exact user-ID to the profile you wish to visit, in which case you should type the (presumed) username, followed by a forward slash and the numeric ID, at the search bar, in order to attempt a direct jump to the profile page.
 		<br><br>
 		If you want to navigate on this site through the browser's address bar, keep in mind that <u><b><strong>for Chromium-based browsers</strong></b></u> you will have to explicitly type out the protocol (https://) in front of the address every single time, otherwise these browsers would perform a web search rather than refreshing the page with the new content. The hash (#) on the URL-line is what's causing this behavior -- tha hash sign is used to differentiate between the various type of contents as the very same html page is getting re-read and subsequently re-composed via javascript.
 		<br><br>
@@ -323,10 +323,12 @@ window.unhide()
 </script>
 
 <script>
+const searchError = 'Anonymous search requests are currently rejected by Instagram for this IP :(<br><br>If you happen to know the exact numeric user ID, you may still be able to jump directly to the profile page by entering<br><b style="color: red"><strong>/ {user ID}</strong></b><br>on the search bar (not the location bar).'
+
     $(function () {
 	
 	//(
-	function search() {
+	var search = window.search = function() {
 
 	window.unhide()
 	$('.content-page').hide()
@@ -441,9 +443,8 @@ console.log(data)
 	    }).error(function(jqXHR, textStatus, errorThrown) {*/
 
 		$('.search-body-wrapper').find('.content').first().removeAttr('style')
-		var z = 'Anonymous search requests are currently rejected by Instagram :('
-		$('.search-result-box').html(z)
-		throw z
+		$('.search-result-box').html(searchError)
+		throw searchError
 
 	    //})
 		ig_data.profile_pic = d.profile_pic_url;
@@ -458,7 +459,7 @@ console.log(data)
 
             if (data.users.length > 0) {
                 data.users.forEach(element => {
-                    $('#search-profile-results').append('<div class="profile-result" title="@' + element.user.username + '" onclick="sessionStorage.setItem(&quot;search-username&quot;, &quot;' + element.user.username +'&quot;); sessionStorage.setItem(&quot;search-id&quot;, &quot;' + element.user.pk +'&quot;); sessionStorage.setItem(&quot;search-full_name&quot;, &quot;' + element.user.full_name +'&quot;); sessionStorage.setItem(&quot;search-profile_pic&quot;, &quot;' + element.user.profile_pic_url +'&quot;); sessionStorage.setItem(&quot;search-profile_pic_hd&quot;, &quot;https://i.instagram.com/api/v1/users/' + element.user.pk + '/info/&quot;); sessionStorage.setItem(&quot;search-verified&quot;, &quot;' + element.user.is_verified + '&quot;)">\n' +
+                    $('#search-profile-results').append('<div class="profile-result" title="@' + element.user.username + '" onclick="sessionStorage.setItem(&quot;search-username&quot;, &quot;' + element.user.username +'&quot;); sessionStorage.setItem(&quot;search-id&quot;, &quot;' + element.user.pk +'&quot;); sessionStorage.setItem(&quot;search-full_name&quot;, &quot;' + element.user.full_name +'&quot;); sessionStorage.setItem(&quot;search-profile_pic&quot;, &quot;' + element.user.profile_pic_url +'&quot;); sessionStorage.setItem(&quot;search-profile_pic_hd&quot;, &quot;https://i.instagram.com/api/v1/users/' + element.user.pk + '/info/&quot;); sessionStorage.setItem(&quot;search-verified&quot;, &quot;' + element.user.is_verified + '&quot;)" oncontextmenu="(function(){ var z = document.getElementById(\'search-input\'); if (z) { z.value = \'/'+ element.user.pk +'\';} })();">\n' +
                         '            <a href="'+ site_url.substring(0,site_url.length-1) +'#profile#' + element.user.username + '">\n' +
                         '                <div class="result-ava">\n' +
                         '                    <img src="' + element.user.profile_pic_url + '" alt="' + element.user.username + '">\n' +
@@ -473,7 +474,7 @@ console.log(data)
 
             if (data.hashtags.length > 0) {
                 data.hashtags.forEach(element => {
-                    $('#search-tags-results').append('<a href="'+ site_url.substring(0,site_url.length-1) +'#tag#' + element.hashtag.name + '#' + element.hashtag.id + '" onclick="sessionStorage.setItem(&quot;tag-name&quot;, &quot;'+ element.hashtag.name +'&quot;); sessionStorage.setItem(&quot;tag-id&quot;, &quot;'+ element.hashtag.id +'&quot;)">' + element.hashtag.name + '</a>'); //+ '#' + element.hashtag.id 
+                    $('#search-tags-results').append('<a href="'+ site_url.substring(0,site_url.length-1) +'#tag#' + element.hashtag.name + '#' + element.hashtag.id + '" onclick="sessionStorage.setItem(&quot;tag-name&quot;, &quot;'+ element.hashtag.name +'&quot;); sessionStorage.setItem(&quot;tag-id&quot;, &quot;'+ element.hashtag.id +'&quot;) "oncontextmenu="(function(){ var z = document.getElementById(\'search-input\'); if (z) { z.value = \'tag#'+ element.hashtag.name +'/'+ element.hashtag.id +'\';} })();">' + element.hashtag.name + '</a>'); //+ '#' + element.hashtag.id 
                 })
             } else {
                 $('#search-tags-results').append('<div class="no_search_result">0 results for ' + search_input + '</div>');
@@ -481,7 +482,7 @@ console.log(data)
 
             if (data.places.length > 0) {
                 data.places.forEach(element => {
-                    $('#search-locations-results').append('<a href="'+ site_url.substring(0,site_url.length-1) +'#location#' + element.place.slug + '#' + element.place.location.pk + '" onclick="sessionStorage.setItem(&quot;data-location-id&quot;, &quot;'+ element.place.location.pk + '&quot;); sessionStorage.setItem(&quot;data-location-name&quot;, &quot;'+ (element.place.subtitle || element.place.title) + '&quot;);">' + element.place.title + '</a>');
+                    $('#search-locations-results').append('<a href="'+ site_url.substring(0,site_url.length-1) +'#location#' + element.place.slug + '#' + element.place.location.pk + '" onclick="sessionStorage.setItem(&quot;data-location-id&quot;, &quot;'+ element.place.location.pk + '&quot;); sessionStorage.setItem(&quot;data-location-name&quot;, &quot;'+ (element.place.subtitle || element.place.title) + '&quot;);" oncontextmenu="(function(){ var z = document.getElementById(\'search-input\'); if (z) { z.value = \'location#'+ element.place.slug +'/'+ element.place.location.pk +'\';} })();">' + element.place.title + '</a>');
                 })
 	    } else {
                 $('#search-locations-results').append('<div class="no_search_result">0 results for ' + search_input + '</div>');
@@ -491,7 +492,16 @@ console.log(data)
 
             $('.search-body-wrapper .content').show();
             $('.load-more-wrapper').hide();
-        });
+
+	}).error(function(jqXHR, textStatus, errorThrown) {console.log(jqXHR)
+	   if (typeof jqXHR == 'object' && jqXHR.responseJSON) {
+	     if (jqXHR.responseJSON.message == 'login_required') {
+		$('.search-body-wrapper').find('.content').first().removeAttr('style')
+		$('.search-result-box').html(searchError)
+		throw serachError
+	     } else console.log(jqXHR)
+	   } else console.log(textStatus)
+	})
 
 //	} else {//tag
 /*
@@ -532,7 +542,7 @@ console.log(data)
 </script>
 
 <script>var isAdBlockActive=true;</script>
-    <script src="/app/assets/js/adblock.js"></script><!--?v=2-->
+    <!--script src="/app/assets/js/adblock.js"></script><!--?v=2-->
 
 <script>
 const shrug = 'NaN';//'¯\\_(ツ)_/¯';
@@ -609,11 +619,11 @@ function get_followers_count(){
 	pd = window.pd = {}
 
 	var i, z, y
-	if (window.page == 'profile' && location.href.split('#')[2] == sessionStorage.getItem('search-username')) {
+	if (window.page == 'profile' && (location.href.split('#')[2] == sessionStorage.getItem('search-username') || location.href.split('#')[2] == localStorage.getItem('search-username')) ) {
 	  z = ['search-username','search-id','search-full_name','search-profile_pic','search-profile_pic_hd','search-verified']
 	  for(i=0;i < z.length;i++) {
 	    y = z[i].split('search-')[1]
-	    ig_data[y] = sessionStorage.getItem(z[i]); if (z[i] == 'search-verified') ig_data[y] = (ig_data[y] == 'true') ? true : false;
+	    ig_data[y] = (sessionStorage.getItem(z[i]) || localStorage.getItem(z[i]) ) ; if (z[i] == 'search-verified') ig_data[y] = (ig_data[y] == 'true') ? true : false;
 	  }
 	}
 
@@ -621,8 +631,14 @@ function get_followers_count(){
 
 	for(i=0;i < z.length;i++) {
 	  if (window.page == 'profile') { sessionStorage.removeItem(z[i]); localStorage.removeItem(z[i]) }
-	  pd[z[i].split('-').join('_')] = (sessionStorage.getItem(z[i]) && !(sessionStorage.getItem(z[i]) == 'null' || sessionStorage.getItem(z[i]) == 'undefined' )) ? sessionStorage.getItem(z[i]) : localStorage.getItem(z[i])
-	  sessionStorage.setItem(z[i], pd[z[i].split('-').join('_')])
+//	  if (window.page != 'tag') {
+	    pd[z[i].split('-').join('_')] = (sessionStorage.getItem(z[i]) && !(sessionStorage.getItem(z[i]) == 'null' || sessionStorage.getItem(z[i]) == 'undefined' )) ? sessionStorage.getItem(z[i]) : localStorage.getItem(z[i])
+	    sessionStorage.setItem(z[i], pd[z[i].split('-').join('_')])
+/*	  } else {// tagged
+	      pd[z[i].split('-').join('_')] = (localStorage.getItem(z[i]) && !(localStorage.getItem(z[i]) == 'null' || localStorage.getItem(z[i]) == 'undefined' )) ? localStorage.getItem(z[i]) : sessionStorage.getItem(z[i])
+	      sessionStorage.setItem(z[i], pd[z[i].split('-').join('_')])
+	      if (z[i] == 'data-username') { sessionStorage.setItem('search-username', pd['data-username']); localStorage.setItem('search-username', pd['data-username']) };
+	    }*/
 	  //console.log(z[i].split('-').join('_') +'\n' + pd[z[i].split('-').join('_')] +'\n'+ sessionStorage.getItem(z[i]) +'\n'+ localStorage.getItem(z[i]))
 	}
 
@@ -905,13 +921,12 @@ if (window.page == 'profile') {
 						//'https://www.instagram.com/web/search/topsearch/?query=' + username;
         $.get(answer_url, function(data){ //console.log(data) // search results for username
 
-		if (!(data && data.users)) {
-		  var z = (1 * location.href.split('#')[3])
+		var z = (1 * location.href.split('#')[3])
+		if (!(data && data.users) || (window.page == 'profile' && typeof z == 'number')) {
 		  if (typeof z != 'number') {
 		    $('.search-body-wrapper').find('.content').first().removeAttr('style')
-		    var z = 'Anonymous search requests are currently rejected by Instagram :('
-		    $('.search-result-box').html(z)
-		    throw z
+		    $('.search-result-box').html(searchError)
+		    throw searchError
 		  } else {
 			query = location.href.split('#')[3]
 			id =  location.href.split('#')[3]
