@@ -64,6 +64,10 @@ function clone(obj) {
 var id
 
 window.orsc = function() {console.log(this.status)
+  var Insta = '<br><div>To get the profile picture in its original size<br>'+
+                '<li>you have to be logged in to Instagram :(</li>'
+  var UA = '<li><a href="https://chrome.google.com/webstore/detail/user-agent-switcher-and-m/bhchdcejhohfmigjafbampogmaanbfkg" style="display: inline-block">use this extension</a> to temporarily add the substring "<div style="color: red; display: inline-block">Instagram 1.1.1</div>" to the User-Agent string. It is only required for this one operation. Once you have the picture URL(s), you should delete the substring as it interferes with other functionality.</li></div><br>'
+
   if (this.readyState == 4 && this.status == 200 && this.responseText) try {
     var z = JSON.parse(this.responseText); console.log(z)
     if (z) {
@@ -83,12 +87,10 @@ window.orsc = function() {console.log(this.status)
         if (z.hd_profile_pic_url_info && z.hd_profile_pic_url_info.url) {
           this.div = this.div + '<a href="#" onclick="window.open(&quot;' + z.hd_profile_pic_url_info.url +'&quot;, &quot;_blank&quot;).focus(); return false">'+ z.username + '_profile_pic_hd</a><br>';
         } else {
-            var c = '<br><div>To get the profile picture in its original size<br>'+
-                    '<li>you have to be logged in to Instagram :(</li>'
-            if (typeof InstallTrigger !== 'undefined') {
-              this.div = c + this.div // Firefox-based browsers don't need anything more
+            if (typeof InstallTrigger !== 'undefined' || (navigator.userAgent && navigator.userAgent.indexOf('Instagram 1.1.1') > -1)) {
+              this.div = Insta + this.div // Firefox-based browsers don't need anything more
             } else {
-                this.div = c + '<li><a href="https://chrome.google.com/webstore/detail/user-agent-switcher-and-m/bhchdcejhohfmigjafbampogmaanbfkg" style="display: inline-block">use this extension</a> to temporarily add the substring "<div style="color: red; display: inline-block">Instagram 1.1.1</div>" to the User-Agent string, then reset it once you have the picture in higher resolution.</li></div><br>' + xhr.div;
+                this.div = Insta + UA + this.div;
               }
           }
       }
@@ -102,6 +104,7 @@ window.orsc = function() {console.log(this.status)
       a.innerHTML = this.div; this.id = this.end_id
     }
 
+  if (this.status == 400) this.div = UA
   if (this.status == 404) this.div = 'There is no instagram user with ID "' + this.id + '"!'
   if (this.status >= 500) this.div = 'Instagram internal server error (Error code: ' + this.status +')'
 
