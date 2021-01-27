@@ -323,9 +323,12 @@ window.unhide()
 </script>
 
 <script>
-const searchError = 'Anonymous search requests are currently rejected by Instagram for this IP :(<br><br>If you happen to know the exact numeric user ID, you may still be able to jump directly to the profile page by entering<br><b style="color: red"><strong>/ {user ID}</strong></b><br>on the search bar (not the location bar).'
+const searchError = 'Anonymous search requests are currently rejected by Instagram :(<br><br>Reverse search may be possible. If you happen to know the exact numeric user ID, you could get the content of the profile page by entering<br>{username to display} <b style="color: red"><strong>/ {user ID}</strong></b><br>on the search bar.'
 
     $(function () {
+
+
+	var search_input = unescape($('#searchform').find('#search-input').attr('value') || location.href.split("#")[2]); //console.log(search_input)
 	
 	//(
 	var search = window.search = function() {
@@ -367,8 +370,8 @@ const searchError = 'Anonymous search requests are currently rejected by Instagr
 /*
 	      function setHeader(xhr) {
 		xhr.setRequestHeader('Access-Control-Allow-Headers','Origin, X-Requested-With, Content-Type, Accept, User-Agent, Referer, Credentials')
-		xhr.setRequestHeader('User-Agent', 'Instagram 1.1.1')				// works only in Firefox, others need a useragent switcher
-		xhr.setRequestHeader('Referer', 'https://www.instagram.com/')		// ajax call will return valuable data only if sent from this domain while logged in
+		//xhr.setRequestHeader('User-Agent', 'Instagram 1.1.1')				// works only in Firefox, others need a useragent switcher
+		xhr.setRequestHeader('Referer', 'https://www.instagram.com/')		// ajax call will only return relevant data if sent from this domain while logged in
 		xhr.setRequestHeader('Access-Control-Allow-Origin', 'https://www.instagram.com')
 		xhr.setRequestHeader('Access-Control-Allow-Credentials', 'true')
 		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
@@ -376,14 +379,24 @@ const searchError = 'Anonymous search requests are currently rejected by Instagr
 		xhr.setRequestHeader('Origin', 'www.instagram.com')
 	      }
 
-		$.ajax({
-		type: 'GET',    
-		url: 'https://index.php?url=' + encodeURIComponent("https://www.instagram.com/web/search/topsearch/?context=blended&query=' + search_input +'&rank_token=0.9094692182667705&include_reel=true"),
+		var xhr = new XMLHttpRequest()
+		xhr.open('get', 'https://api.codetabs.com/v1/proxy/?quest=https://api.imgkoa.com/search?username='+ encodeURIComponent(search_input), true)
+		xhr.onreadystatechange = function() {console.log(xhr.status +' '+xhr.readyState)//https://api.imgkoa.com/posts?userid=198945880&next=
+		  if (xhr.readyState == 4 && xhr.status == 200) {
+		    console.log(xhr.responseText)
+		  }
+		}
+		//setHeader(xhr)
+		xhr.send('')
+
+/*		$.ajax({
+		type: 'POST',    
+		url: 'https://cors-anywhere.herokuapp.com/https://api.imgkoa.com/search?username='+ encodeURIComponent(search_input),//'https://index.php?url=' + encodeURIComponent("https://www.instagram.com/web/search/topsearch/?context=blended&query=' + search_input +'&rank_token=0.9094692182667705&include_reel=true"),
 		cache: false,
 		// NO setCookies option available, set cookie to document
 
 		crossDomain: true,
-		dataType: 'json',
+		dataType: 'jsonp',
 		xhrFields: {
 		    withCredentials: true
 		},
@@ -538,6 +551,9 @@ console.log(data)
 	    $('.search-results').html(clear)
 	    search();
 	});
+
+	if (search_input == location.href.split("#")[2] && typeof search_input == 'string' && search_input.indexOf('/') > -1) search()
+
     });
 </script>
 
@@ -661,7 +677,7 @@ function get_followers_count(){
 if (window.page == 'location') {
     (function(){
 	var s = 'Instagram posts '
-	var l = decodeURIComponent(window.pd.data_location_name) //localStorage.getItem('location-subtitle')
+	var l = decodeURIComponent(window.pd.data_location_name) || localStorage.getItem('location-name')
 	var new_title = l + ' ' + s + '- Peektogram'
 	var description = 'Explore ' + s + 'by ' + l
 	$('meta[name="description"]').attr('content', description)
@@ -767,6 +783,9 @@ if (window.page == 'media') {
 		a.attr('data-followers', following); a.children().first().html(following)
 
 		a = $(".profile-hd-link").attr("onclick","{ window.open('https://i.instagram.com/api/v1/users/"+ ig_data.id +"/info/0/', '_blank').focus(); }")//this.setAttribute('href','#') }")
+
+		$('.single-photo-nickname').find('a').first().html('@'+ window.pd.data_username)
+		$('.single-photo-nickname').find('a').first().attr('href', site_url.substring(0,site_url.length-1) + '#profile#' + window.pd.data_username)
 
 	}
 
