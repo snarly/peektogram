@@ -1732,7 +1732,7 @@ $(document).ready(function () {
     function loadMoreTag() {
         $('.load-more-wrapper').css('opacity', 1); if (!window.next1) { var Next = next } else { var Next = ''; delete window.next1 }
 
-	function tagged_media(data) {console.log(data)
+	function tagged_media(data) {//console.log(data)
 
             data = data.data
             if ($.isEmptyObject(data.hashtag.edge_hashtag_to_media.edges) === true) {
@@ -1892,6 +1892,7 @@ $(document).ready(function () {
 		if (medias[0] && medias[0]['node'] && medias[0]['node'].shortcode) {
 
 		   function update_basic_info(username, uid) {
+			if (window.location.href.indexOf('##'+ id) > -1) { window.location.href = location.href.split('##' + id).join('#'+ username) }
 			$('.load-profile').html('@' + username)
 			$("a[data-username='"+ _username +"']" ).attr('data-username', username)
 			if (_username) {
@@ -2498,14 +2499,17 @@ $(document).ready(function () {
         });
     }
 
-    if (window.page == 'location') loadMore()
-    if (window.page == 'tag') loadMoreTag()
-    if (window.page == 'location' || window.page == 'tag') {
-
+    if (window.page == 'location') {
+	loadMore()
         $(window).scroll(function() {
 	  paginate()
         });
-
+    }
+    if (window.page == 'tag') {
+	loadMoreTag()
+        $(window).scroll(function() {
+	  loadMoreTag()
+        });
     }
     if ($('.location-page').length > 0 && window.page0) {//
         $.post(folder + "/app/controllers/ajax.php", {location_name: sessionStorage.getItem('data-location-id'), query: query, type: "story_location"}, function (data) {
