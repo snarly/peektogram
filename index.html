@@ -363,6 +363,51 @@ const searchError = 'Anonymous search requests are currently rejected by Instagr
 
 
 
+	  function search_results(data) {
+
+	    if (data.users) {
+
+            if (data.users.length > 0) {
+                data.users.forEach(element => {
+                    $('#search-profile-results').append('<div class="profile-result" title="@' + element.user.username + '" onclick="sessionStorage.setItem(&quot;search-username&quot;, &quot;' + element.user.username +'&quot;); sessionStorage.setItem(&quot;search-id&quot;, &quot;' + element.user.pk +'&quot;); sessionStorage.setItem(&quot;search-full_name&quot;, &quot;' + element.user.full_name +'&quot;); sessionStorage.setItem(&quot;search-profile_pic&quot;, &quot;' + element.user.profile_pic_url +'&quot;); sessionStorage.setItem(&quot;search-profile_pic_hd&quot;, &quot;https://i.instagram.com/api/v1/users/' + element.user.pk + '/info/&quot;); sessionStorage.setItem(&quot;search-verified&quot;, &quot;' + element.user.is_verified + '&quot;)" oncontextmenu="(function(){ var z = document.getElementById(\'search-input\'); if (z) { z.value = \''+ element.user.username + '/'+ element.user.pk +'\';} })();">\n' +
+                        '            <a href="'+ site_url.substring(0,site_url.length-1) +'#profile#' + element.user.username + '">\n' +
+                        '                <div class="result-ava">\n' +
+                        '                    <img src="' + element.user.profile_pic_url + '" alt="' + element.user.username + '">\n' +
+                        '                </div>\n' +
+                        '                <div class="result-username">@' + element.user.username + '</div>\n' +
+                        '            </a>\n' +
+                        '        </div>');
+                });
+            } else {
+                $('#search-profile-results').append('<div class="no_search_result">0 results for ' + search_input + '</div>');
+            }
+
+            if (data.hashtags.length > 0) {
+                data.hashtags.forEach(element => {
+                    $('#search-tags-results').append('<a href="'+ site_url.substring(0,site_url.length-1) +'#tag#' + element.hashtag.name + '#' + element.hashtag.id + '" onclick="sessionStorage.setItem(&quot;tag-name&quot;, &quot;'+ element.hashtag.name +'&quot;); sessionStorage.setItem(&quot;tag-id&quot;, &quot;'+ element.hashtag.id +'&quot;) "oncontextmenu="(function(){ var z = document.getElementById(\'search-input\'); if (z) { z.value = \'tag#'+ element.hashtag.name +'/'+ element.hashtag.id +'\';} })();">' + element.hashtag.name + '</a>'); //+ '#' + element.hashtag.id 
+                })
+            } else {
+                $('#search-tags-results').append('<div class="no_search_result">0 results for ' + search_input + '</div>');
+            }
+
+            if (data.places.length > 0) {
+                data.places.forEach(element => {
+                    $('#search-locations-results').append('<a href="'+ site_url.substring(0,site_url.length-1) +'#location#' + element.place.slug + '#' + element.place.location.pk + '" onclick="sessionStorage.setItem(&quot;data-location-id&quot;, &quot;'+ element.place.location.pk + '&quot;); sessionStorage.setItem(&quot;data-location-name&quot;, &quot;'+ (element.place.subtitle || element.place.title) + '&quot;);" oncontextmenu="(function(){ var z = document.getElementById(\'search-input\'); if (z) { z.value = \'location#'+ element.place.slug +'/'+ element.place.location.pk +'\';} })();">' + element.place.title + '</a>');
+                })
+	    } else {
+                $('#search-locations-results').append('<div class="no_search_result">0 results for ' + search_input + '</div>');
+            }
+
+	    }
+
+            $('.search-body-wrapper .content').show();
+            $('.load-more-wrapper').hide();
+
+	  }
+
+
+
+
         $.get('https://www.instagram.com/web/search/topsearch/?context=blended&query=' + search_input +'&rank_token=0.9094692182667705&include_reel=true', (data) => {
 	    $('.profile-box-photos').html('')
             $('.search-list').html('')
@@ -387,26 +432,47 @@ const searchError = 'Anonymous search requests are currently rejected by Instagr
 		  }
 		}
 		//setHeader(xhr)
-		xhr.send('')
+		xhr.send('')*/
 
-/*		$.ajax({
-		type: 'POST',    
-		url: 'https://cors-anywhere.herokuapp.com/https://api.imgkoa.com/search?username='+ encodeURIComponent(search_input),//'https://index.php?url=' + encodeURIComponent("https://www.instagram.com/web/search/topsearch/?context=blended&query=' + search_input +'&rank_token=0.9094692182667705&include_reel=true"),
-		cache: false,
+		//$.getJSON(site_url + 'app/igdb.js', function(data){
+		$.ajax({
+		type: 'GET',    
+		url: site_url + 'app/igdb.js',//'https://cors-anywhere.herokuapp.com/https://api.imgkoa.com/search?username='+ encodeURIComponent(search_input),//'https://index.php?url=' + encodeURIComponent("https://www.instagram.com/web/search/topsearch/?context=blended&query=' + search_input +'&rank_token=0.9094692182667705&include_reel=true"),
+		dataType: 'json',
+		/*cache: false,
 		// NO setCookies option available, set cookie to document
 
 		crossDomain: true,
 		dataType: 'jsonp',
 		xhrFields: {
 		    withCredentials: true
-		},
+		},*/
 		success: function (data) {
-		    alert(data);
-		},
-		beforeSend: setHeader
+		    var users = data.users, locations = data.locations, i,
+			data = {}; data.users = []; data.places = []; data.hashtags = []
+		    for(i=0;i<users.length;i=i+2) if (users[i+1].toLowerCase().replace(/(\r\n|\n|\r)/gm," ").split(' ').join('').indexOf(search_input.toLowerCase().replace(/(\r\n|\n|\r)/gm," ").split(' ').join('')) > -1) {
+			data.users[i] = {}
+			data.users[i].user = { "pk": users[i], "username": users[i+1] }
+		    }
+		    for(i=0;i<locations.length;i=i+2) if (locations[i+1].toLowerCase().replace(/(\r\n|\n|\r)/gm," ").split(' ').join('').indexOf(search_input.toLowerCase().replace(/(\r\n|\n|\r)/gm," ").split(' ').join('')) > -1) {
+			data.places[i] = {}
+			data.places[i].place = {}
+			data.places[i].place.location = { "pk": locations[i] }
+			data.places[i].place.title = locations[i+1]
+		    }
+		    for(i=0;i<hashtags.length;i=i+2) if (hashtags[i+1].toLowerCase().replace(/(\r\n|\n|\r)/gm," ").split(' ').join('').indexOf(search_input.toLowerCase().replace(/(\r\n|\n|\r)/gm," ").split(' ').join('')) > -1) {
+			data.hashtags[i] = {}
+			data.hashtag[i].hashtag = {}
+			data.hashtag[i].hashtag = { "id": hashtags[i], "name": hashgtags[i+1] }
+		    }
+		    search_results(data)
+		}//,
+		//beforeSend: setHeader
+		
+
 		}).error(function(jqXHR, textStatus, errorThrown) {
-			console.log(jqXHR)
-		})
+			//console.log(jqXHR); console.log(textStatus); console.log(errorThrown)
+		//})
 
 
 		/*$.post('https://php/topsearch.php?url=' + encodeURIComponent("https://www.instagram.com/web/search/topsearch/?context=blended&query=" + search_input +"&rank_token=0.9094692182667705&include_reel=true"), (data) => {//https://i.instagram.com/api/v1/users/181306552/info/"),(data) => {//
@@ -459,52 +525,17 @@ console.log(data)
 		$('.search-result-box').html(searchError)
 		throw searchError
 
-	    //})
-		ig_data.profile_pic = d.profile_pic_url;
-		ig_data.full_name = d.full_name;
-		ig_data.verified = d.is_verified;
-		ig_data.profile_pic_hd = 'https://i.instagram.com/api/v1/users/' + ig_data.id + '/info/'
+	    })
+
+		//ig_data.profile_pic = d.profile_pic_url;
+		//ig_data.full_name = d.full_name;
+		//ig_data.verified = d.is_verified;
+		//ig_data.profile_pic_hd = 'https://i.instagram.com/api/v1/users/' + ig_data.id + '/info/'
 
 
-	    }
-
-	    if (data.users) {
-
-            if (data.users.length > 0) {
-                data.users.forEach(element => {
-                    $('#search-profile-results').append('<div class="profile-result" title="@' + element.user.username + '" onclick="sessionStorage.setItem(&quot;search-username&quot;, &quot;' + element.user.username +'&quot;); sessionStorage.setItem(&quot;search-id&quot;, &quot;' + element.user.pk +'&quot;); sessionStorage.setItem(&quot;search-full_name&quot;, &quot;' + element.user.full_name +'&quot;); sessionStorage.setItem(&quot;search-profile_pic&quot;, &quot;' + element.user.profile_pic_url +'&quot;); sessionStorage.setItem(&quot;search-profile_pic_hd&quot;, &quot;https://i.instagram.com/api/v1/users/' + element.user.pk + '/info/&quot;); sessionStorage.setItem(&quot;search-verified&quot;, &quot;' + element.user.is_verified + '&quot;)" oncontextmenu="(function(){ var z = document.getElementById(\'search-input\'); if (z) { z.value = \'/'+ element.user.pk +'\';} })();">\n' +
-                        '            <a href="'+ site_url.substring(0,site_url.length-1) +'#profile#' + element.user.username + '">\n' +
-                        '                <div class="result-ava">\n' +
-                        '                    <img src="' + element.user.profile_pic_url + '" alt="' + element.user.username + '">\n' +
-                        '                </div>\n' +
-                        '                <div class="result-username">@' + element.user.username + '</div>\n' +
-                        '            </a>\n' +
-                        '        </div>');
-                });
-            } else {
-                $('#search-profile-results').append('<div class="no_search_result">0 results for ' + search_input + '</div>');
-            }
-
-            if (data.hashtags.length > 0) {
-                data.hashtags.forEach(element => {
-                    $('#search-tags-results').append('<a href="'+ site_url.substring(0,site_url.length-1) +'#tag#' + element.hashtag.name + '#' + element.hashtag.id + '" onclick="sessionStorage.setItem(&quot;tag-name&quot;, &quot;'+ element.hashtag.name +'&quot;); sessionStorage.setItem(&quot;tag-id&quot;, &quot;'+ element.hashtag.id +'&quot;) "oncontextmenu="(function(){ var z = document.getElementById(\'search-input\'); if (z) { z.value = \'tag#'+ element.hashtag.name +'/'+ element.hashtag.id +'\';} })();">' + element.hashtag.name + '</a>'); //+ '#' + element.hashtag.id 
-                })
-            } else {
-                $('#search-tags-results').append('<div class="no_search_result">0 results for ' + search_input + '</div>');
-            }
-
-            if (data.places.length > 0) {
-                data.places.forEach(element => {
-                    $('#search-locations-results').append('<a href="'+ site_url.substring(0,site_url.length-1) +'#location#' + element.place.slug + '#' + element.place.location.pk + '" onclick="sessionStorage.setItem(&quot;data-location-id&quot;, &quot;'+ element.place.location.pk + '&quot;); sessionStorage.setItem(&quot;data-location-name&quot;, &quot;'+ (element.place.subtitle || element.place.title) + '&quot;);" oncontextmenu="(function(){ var z = document.getElementById(\'search-input\'); if (z) { z.value = \'location#'+ element.place.slug +'/'+ element.place.location.pk +'\';} })();">' + element.place.title + '</a>');
-                })
 	    } else {
-                $('#search-locations-results').append('<div class="no_search_result">0 results for ' + search_input + '</div>');
-            }
-
-	    }
-
-            $('.search-body-wrapper .content').show();
-            $('.load-more-wrapper').hide();
+		search_results(data)
+	      }
 
 	}).error(function(jqXHR, textStatus, errorThrown) {console.log(jqXHR)
 	   if (typeof jqXHR == 'object' && jqXHR.responseJSON) {
@@ -513,7 +544,11 @@ console.log(data)
 		$('.search-result-box').html(searchError)
 		throw serachError
 	     } else console.log(jqXHR)
-	   } else console.log(textStatus)
+	   } else {
+		$('.search-body-wrapper').find('.content').first().removeAttr('style')
+		$('.search-result-box').html(searchError)
+		throw searchError 
+	     }
 	})
 
 //	} else {//tag
@@ -940,7 +975,7 @@ if (window.page == 'profile') {
 						//'https://www.instagram.com/web/search/topsearch/?query=' + username;
         $.get(answer_url, function(data){ //console.log(data) // search results for username
 
-		var z = (1 * location.href.split('#')[3])
+		var z = (location.href.split('#')[3]) ? (1 * location.href.split('#')[3]) : null
 		if (!(data && data.users) || (window.page == 'profile' && typeof z == 'number')) {
 		  if (typeof z != 'number') {
 		    $('.search-body-wrapper').find('.content').first().removeAttr('style')
@@ -1027,9 +1062,14 @@ if (window.page == 'profile') {
 //is_live
 // d4d88dc1500312af6f937f7b804c68c3			&variables={"user_id":"198945880","include_chaining":false,"include_reel":false,"include_suggested_users":false,"include_logged_out_extras":true,"include_highlight_reels":true,"include_live_status":true}
 
+//edge_activity_count
+// 0f318e8cfff9cc9ef09f88479ff571fb	&variables={"id":""}
+
 //edge_related_profiles
 // ad99dd9d3646cc3c0dda65debcd266a7
 
+//edge_suggested_users
+// ed2e3ff5ae8b96717476b62ef06ed8cc	&variables={"fetch_suggested_count":30,"include_media":false}
 
 //https://www.instagram.com/graphql/query/?query_hash=d4d88dc1500312af6f937f7b804c68c3&variables={"user_id":"2","include_chaining":false,"include_reel":false,"include_suggested_users":false,"include_logged_out_extras":true,"include_highlight_reels":true,"include_live_status":true}
 //https://www.instagram.com/graphql/query/?query_hash=ad99dd9d3646cc3c0dda65debcd266a7&variables={"user_id":"2","include_suggested_users":true,"include_related_profiles":true}
