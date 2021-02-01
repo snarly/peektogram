@@ -1729,7 +1729,7 @@ $(document).ready(function () {
         }
     });
 
-    function loadMoreTag() {
+    function loadMoreTag() { console.log('loadedmoretag')
         $('.load-more-wrapper').css('opacity', 1); if (!window.next1) { var Next = next } else { var Next = ''; delete window.next1 }
 
 	function tagged_media(data) {//console.log(data)
@@ -1807,6 +1807,7 @@ $(document).ready(function () {
 	  tagged_media(data)
         }).error(function(jqXHR, textStatus, errorThrown) {
 	    //if (window.tags) {
+		//https://api.imgkoa.com/tag?tagname=&next=
 		//next = (window.tags.graphql.hashtag.edge_hashtag_to_media.page_info.has_next_page) ? window.tags.graphql.hashtag.edge_hashtag_to_media.page_info.end_cursor : next
 		//tagged_media(window.tags)
 	    //} else {
@@ -1852,7 +1853,7 @@ $(document).ready(function () {
 	    //}
         });
     }
-    function loadMore() {
+    function loadMore() {console.log('loadmore')
         $('.load-more-wrapper').css('opacity', 1); if (!window.next1) { var Next = next } else { var Next = ''; delete window.next1 }
 	var hash
 	if (window.page == 'profile') hash = '003056d32c2554def87228bc3fd9668a'
@@ -2042,7 +2043,7 @@ $(document).ready(function () {
 		xhr.setRequestHeader('Access-Control-Allow-Headers','Origin, X-Requested-With, Content-Type, Accept')
 	      }
 
-	    $.ajax({
+	    $.ajax({		//https://www.picuki.com/app/controllers/ajax.php?type=location&end_cursor=&uuid=3c74a802-765e-4a92-91a9-1315bc7e2668&id=&ads=0
 		url: folder + nextPageUrl,
 		type: "POST",
 		success: function(url, textStatus, xhr) { //console.log(xhr);
@@ -2306,7 +2307,7 @@ $(document).ready(function () {
     }
 
     if ($('.tag-page').length > 0 && window.page == 'tag') {
-        $(window).scroll(function() {
+        $(window).scroll(function() {console.log(($(window).scrollTop()) +' - < - '+ ($(document).height() - $(window).height())); console.log(scroll +' '+next+' '+window.page)
             if(($(window).scrollTop()+75) < ($(document).height() - $(window).height()))
                 return;
 
@@ -2317,7 +2318,8 @@ $(document).ready(function () {
             loadMoreTag();
         });
     }
-    if ($('.profile-box-photos').length > 0) {
+
+
         let first = false;
 	function paginate() {
             if(($(window).scrollTop()+75) < ($(document).height() - $(window).height()))
@@ -2370,12 +2372,17 @@ $(document).ready(function () {
             }
 
 	}//paginate
+
+
+    if ($('.profile-box-photos').length > 0) {
+
+
 	if (window.next1) {
 	  window.paginate = paginate
 	}
-        $(window).scroll(function() {
+        $(window).scroll(function() { console.log('photo scroll')
 	  window.page = location.href.split('#')[1]
-	  if (window.page == 'profile' || window.page == 'location') paginate()
+	  if (window.page == 'profile' || window.page == 'location') { console.log('photo loc'); paginate() }
         });
 
         let has_story = false;
@@ -2499,18 +2506,20 @@ $(document).ready(function () {
         });
     }
 
-    if (window.page == 'location') {
+      if (window.page == 'location') {console.log('loc pag 0')
 	loadMore()
         $(window).scroll(function() {
-	  paginate()
+	  if ($('.profile-box-photos').length == 0) { console.log('loc pag 1'); paginate() }
         });
-    }
-    if (window.page == 'tag') {
+      }
+      if (window.page == 'tag') {console.log('tag pag 0')
 	loadMoreTag()
         $(window).scroll(function() {
-	  loadMoreTag()
+	  if ($('.profile-box-photos').length == 0) { console.log('tag pag 1'); loadMoreTag() }
         });
-    }
+      }
+
+
     if ($('.location-page').length > 0 && window.page0) {//
         $.post(folder + "/app/controllers/ajax.php", {location_name: sessionStorage.getItem('data-location-id'), query: query, type: "story_location"}, function (data) {
             data = JSON.parse(data);
