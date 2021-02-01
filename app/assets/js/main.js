@@ -2311,7 +2311,7 @@ $(document).ready(function () {
             if(($(window).scrollTop()+75) < ($(document).height() - $(window).height()))
                 return;
 
-            if (scroll || next == null || window.page != 'profile')
+            if (scroll || next == null)
                 return;
             scroll = !scroll;
 
