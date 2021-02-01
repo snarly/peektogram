@@ -2307,7 +2307,7 @@ $(document).ready(function () {
     }
 
     if ($('.tag-page').length > 0 && window.page == 'tag') {
-        $(window).scroll(function() {console.log(($(window).scrollTop()) +' < '+ ($(document).height() - $(window).height())); console.log(scroll +' '+next+' '+window.page)
+        $(window).scroll(function() { //console.log(($(window).scrollTop()) +' < '+ ($(document).height() - $(window).height())); console.log(scroll +' '+next+' '+window.page)
             if(($(window).scrollTop()+75) < ($(document).height() - $(window).height()))
                 return;
 
@@ -2517,7 +2517,7 @@ $(document).ready(function () {
         //});
       }
       if (window.page == 'tag') { //tag 0
-	loadMoreTag()
+	scroll = true; loadMoreTag()
         //$(window).scroll(function() {
 	//  if ($('.profile-box-photos').length == 0) { console.log('tag 1'); loadMoreTag() }
         //});
