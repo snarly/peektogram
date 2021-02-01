@@ -1783,12 +1783,12 @@ $(document).ready(function () {
                 });
                 $postsMasonry.imagesLoaded().progress( function() {
                     $postsMasonry.isotope('layout');
-                });
+                }); console.log('scroll-0: ' + scroll)
                 if (data.hashtag.edge_hashtag_to_media.page_info.has_next_page) {
                     next = data.hashtag.edge_hashtag_to_media.page_info.end_cursor;
                     $('.load-more-wrap').show();
 
-                    scroll = !scroll;
+                    scroll = !scroll; console.log('scroll-1: ' + scroll)
                 } else {
                     next = null;
                 }
