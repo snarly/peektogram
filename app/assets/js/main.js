@@ -1729,7 +1729,7 @@ $(document).ready(function () {
         }
     });
 
-    function loadMoreTag() { console.log('loadmoretag / scroll = '+ scroll)
+    function loadMoreTag() {
         $('.load-more-wrapper').css('opacity', 1); if (!window.next1) { var Next = next } else { var Next = ''; delete window.next1 }
 
 	function tagged_media(data) {//console.log(data)
@@ -1853,7 +1853,7 @@ $(document).ready(function () {
 	    //}
         });
     }
-    function loadMore() {console.log('loadmore / scroll = '+ scroll)
+    function loadMore() {
         $('.load-more-wrapper').css('opacity', 1); if (!window.next1) { var Next = next } else { var Next = ''; delete window.next1 }
 	var hash
 	if (window.page == 'profile') hash = '003056d32c2554def87228bc3fd9668a'
@@ -2066,7 +2066,7 @@ $(document).ready(function () {
 		beforeSend: setHeader
 	    }).error(function(jqXHR, textStatus, errorThrown) {*/
 
-	    if (window.page == 'profile') {
+	if (window.page == 'profile') {
 
 	    $.getJSON('https://api.codetabs.com/v1/proxy/?quest=https://api.imgkoa.com/posts?userid=' + id + '&next=' + Next, function(data) { console.log('api.codetabs.com proxy data\n'+data)
 
@@ -2201,7 +2201,7 @@ $(document).ready(function () {
             //$.post(folder + "/app/controllers/ajax.php", {update_request: 'js_error', type: 'load_more'});
 	    })
 
-	    } else {
+	} else {
 
             next = null;
             $('.load-more-wrapper').css('opacity', 0);
@@ -2212,7 +2212,7 @@ $(document).ready(function () {
 	    throw z
             //$.post(folder + "/app/controllers/ajax.php", {update_request: 'js_error', type: 'load_more'});
 
-	    }
+	}
 
         });
     }
@@ -2307,7 +2307,7 @@ $(document).ready(function () {
     }
 
     if ($('.tag-page').length > 0 && window.page == 'tag') {
-        $(window).scroll(function() { //console.log(($(window).scrollTop()) +' < '+ ($(document).height() - $(window).height())); console.log(scroll +' '+next+' '+window.page)
+        $(window).scroll(function() {
             if(($(window).scrollTop()+75) < ($(document).height() - $(window).height()))
                 return;
 
@@ -2382,17 +2382,13 @@ $(document).ready(function () {
 	}
 	if (window.page == 'profile' || window.page == 'location')
         $(window).scroll(function() {
-	  //window.page = location.href.split('#')[1]
-	  //if (window.page == 'profile' || window.page == 'location') { 
 	  paginate()
-	  //}
-	  //if (window.page == 'tag') { scroll = !scroll; loadMoreTag() }
         });
 
         let has_story = false;
 	function stories() {
 
-	if (window.page == 'profile' && window.page0)//
+	if (window.page == 'profile' && window.page0)
         $.getJSON('https://www.instagram.com/graphql/query/?query_hash=ad99dd9d3646cc3c0dda65debcd266a7&variables={"user_id":"' + query + '","include_chaining":false,"include_reel":false,"include_suggested_users":false,"include_logged_out_extras":true,"include_highlight_reels":false,"include_related_profiles":true,"include_live_status":false}', function(data) {
 	    data = data.data;
 	    if (!(data.user && data.user.has_public_story)) {
@@ -2511,20 +2507,14 @@ $(document).ready(function () {
     }
 
       if (window.page == 'location') { //loc 0
-	paginate() //loadMore()
-        //$(window).scroll(function() {
-	//  if ($('.profile-box-photos').length == 0) { console.log('loc 1'); paginate() }
-        //});
+	paginate()
       }
       if (window.page == 'tag') { //tag 0
 	scroll = true; loadMoreTag()
-        //$(window).scroll(function() {
-	//  if ($('.profile-box-photos').length == 0) { console.log('tag 1'); loadMoreTag() }
-        //});
       }
 
 
-    if ($('.location-page').length > 0 && window.page0) {//
+    if ($('.location-page').length > 0 && window.page0) {
         $.post(folder + "/app/controllers/ajax.php", {location_name: sessionStorage.getItem('data-location-id'), query: query, type: "story_location"}, function (data) {
             data = JSON.parse(data);
             if (data.stories_title !== '') {
@@ -2562,7 +2552,7 @@ $(document).ready(function () {
     }
 
 
-    if ($('.tag-page').length > 0 && window.page0) {//
+    if ($('.tag-page').length > 0 && window.page0) {
         $.post(folder + "/app/controllers/ajax.php", {query: query, type: "story_tag"}, function (data) {
             data = JSON.parse(data);
             if (data.stories_title !== '') {
@@ -2801,7 +2791,7 @@ $(document).ready(function () {
 	var elem = $('[href="'+ url +'"]').first()
 	if ( elem.attr('data-window-page-url') ) {
 	  var z = ['data-post-type','data-shortcode','data-username','data-video-poster','href','data-location-id','data-location-name','data-location-slug','data-time','data-likes','data-comments','data-display-resources','data-caption'], i
-	  for(i=0;i < z.length;i++) if (z[i]) { localStorage.setItem(z[i], elem.attr(z[i])) }
+	  for(i=0;i < z.length;i++) if (z[i]) { sessionStorage.setItem(z[i], elem.attr(z[i])); localStorage.setItem(z[i], elem.attr(z[i])) }
 	  window.open( elem.attr('data-window-page-url'), '_blank')
 	} else {
 	    var y = (window.pd && typeof window.pd.data_post_type == 'string') ? window.pd.data_post_type : localStorage.getItem('data-post-type')
