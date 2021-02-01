@@ -2511,13 +2511,13 @@ $(document).ready(function () {
     }
 
       if (window.page == 'location') { //loc 0
-	scroll = true; paginate() //loadMore()
+	paginate() //loadMore()
         //$(window).scroll(function() {
 	//  if ($('.profile-box-photos').length == 0) { console.log('loc 1'); paginate() }
         //});
       }
       if (window.page == 'tag') { //tag 0
-	scroll = true; loadMoreTag()
+	loadMoreTag()
         //$(window).scroll(function() {
 	//  if ($('.profile-box-photos').length == 0) { console.log('tag 1'); loadMoreTag() }
         //});
