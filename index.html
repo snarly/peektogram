@@ -537,7 +537,7 @@ console.log(data)
 		search_results(data)
 	      }
 
-	}).error(function(jqXHR, textStatus, errorThrown) {console.log(jqXHR)
+	}).error(function(jqXHR, textStatus, errorThrown) {
 	   if (typeof jqXHR == 'object' && jqXHR.responseJSON) {
 	     if (jqXHR.responseJSON.message == 'login_required') {
 		$('.search-body-wrapper').find('.content').first().removeAttr('style')
@@ -1149,7 +1149,7 @@ $(document).ready(function(){
     <div class="lightbox-bg"></div>
     <div class="lightbox">
         <div class="lightbox-close" style="display: none;"><span class="flaticon-close-button"></span></div>
-        <div class="download_button" data-url="" style="display: none;"><span class="flaticon-download-button"></span></div>
+        <div class="download_button" data-url="" style="display: none;"><span class="flaticon-forward-arrow"></span></div><!--flaticon-download-button-->
         <div id="lightbox" class="lightbox-media-place"></div>
     </div>
 </div>
