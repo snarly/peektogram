@@ -1729,7 +1729,7 @@ $(document).ready(function () {
         }
     });
 
-    function loadMoreTag() { console.log('loadedmoretag')
+    function loadMoreTag() { console.log('loadmoretag / scroll = '+ scroll)
         $('.load-more-wrapper').css('opacity', 1); if (!window.next1) { var Next = next } else { var Next = ''; delete window.next1 }
 
 	function tagged_media(data) {//console.log(data)
@@ -1783,12 +1783,12 @@ $(document).ready(function () {
                 });
                 $postsMasonry.imagesLoaded().progress( function() {
                     $postsMasonry.isotope('layout');
-                }); console.log('scroll-0: ' + scroll)
+                });
                 if (data.hashtag.edge_hashtag_to_media.page_info.has_next_page) {
                     next = data.hashtag.edge_hashtag_to_media.page_info.end_cursor;
                     $('.load-more-wrap').show();
 
-                    scroll = !scroll; console.log('scroll-1: ' + scroll)
+                    scroll = !scroll;
                 } else {
                     next = null;
                 }
@@ -1853,7 +1853,7 @@ $(document).ready(function () {
 	    //}
         });
     }
-    function loadMore() {console.log('loadmore')
+    function loadMore() {console.log('loadmore / scroll = '+ scroll)
         $('.load-more-wrapper').css('opacity', 1); if (!window.next1) { var Next = next } else { var Next = ''; delete window.next1 }
 	var hash
 	if (window.page == 'profile') hash = '003056d32c2554def87228bc3fd9668a'
@@ -2068,7 +2068,7 @@ $(document).ready(function () {
 
 	    if (window.page == 'profile') {
 
-	    $.getJSON('https://api.codetabs.com/v1/proxy/?quest=https://api.imgkoa.com/posts?userid=' + id + '&next=' + Next, function(data) { console.log(data)
+	    $.getJSON('https://api.codetabs.com/v1/proxy/?quest=https://api.imgkoa.com/posts?userid=' + id + '&next=' + Next, function(data) { console.log('api.codetabs.com proxy data\n'+data)
 
 	    var obj
 	    if (window.page == 'profile') {
@@ -2307,7 +2307,7 @@ $(document).ready(function () {
     }
 
     if ($('.tag-page').length > 0 && window.page == 'tag') {
-        $(window).scroll(function() {console.log(($(window).scrollTop()) +' - < - '+ ($(document).height() - $(window).height())); console.log(scroll +' '+next+' '+window.page)
+        $(window).scroll(function() {console.log(($(window).scrollTop()) +' < '+ ($(document).height() - $(window).height())); console.log(scroll +' '+next+' '+window.page)
             if(($(window).scrollTop()+75) < ($(document).height() - $(window).height()))
                 return;
 
@@ -2380,9 +2380,13 @@ $(document).ready(function () {
 	if (window.next1) {
 	  window.paginate = paginate
 	}
-        $(window).scroll(function() { console.log('photo scroll')
-	  window.page = location.href.split('#')[1]
-	  if (window.page == 'profile' || window.page == 'location') { console.log('photo loc'); paginate() }
+	if (window.page == 'profile' || window.page == 'location')
+        $(window).scroll(function() {
+	  //window.page = location.href.split('#')[1]
+	  //if (window.page == 'profile' || window.page == 'location') { 
+	  paginate()
+	  //}
+	  //if (window.page == 'tag') { scroll = !scroll; loadMoreTag() }
         });
 
         let has_story = false;
@@ -2506,17 +2510,17 @@ $(document).ready(function () {
         });
     }
 
-      if (window.page == 'location') {console.log('loc pag 0')
-	loadMore()
-        $(window).scroll(function() {
-	  if ($('.profile-box-photos').length == 0) { console.log('loc pag 1'); paginate() }
-        });
+      if (window.page == 'location') { //loc 0
+	scroll = true; paginate() //loadMore()
+        //$(window).scroll(function() {
+	//  if ($('.profile-box-photos').length == 0) { console.log('loc 1'); paginate() }
+        //});
       }
-      if (window.page == 'tag') {console.log('tag pag 0')
-	loadMoreTag()
-        $(window).scroll(function() {
-	  if ($('.profile-box-photos').length == 0) { console.log('tag pag 1'); loadMoreTag() }
-        });
+      if (window.page == 'tag') { //tag 0
+	scroll = true; loadMoreTag()
+        //$(window).scroll(function() {
+	//  if ($('.profile-box-photos').length == 0) { console.log('tag 1'); loadMoreTag() }
+        //});
       }
 
 
