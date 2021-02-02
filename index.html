@@ -995,7 +995,7 @@ if (window.page == 'profile') {
 						//'https://www.instagram.com/web/search/topsearch/?query=' + username;
         $.get(answer_url, function(data){ //console.log(data) // search results for username
 
-		var z = (location.href.split('#')[3]) ? (1 * location.href.split('#')[3]) : null
+		var z = (location.href.split('#')[3]) ? (1 * location.href.split('#')[3]) : null; console.log(z); console.log(typeof z)
 		if (!(data && data.users) || (window.page == 'profile' && typeof z == 'number')) {
 		  if (typeof z != 'number') {
 
@@ -1008,7 +1008,7 @@ if (window.page == 'profile') {
 			id =  location.href.split('#')[3]
 			_username = location.href.split('#')[2]
 			ig_data.username = _username
-			ig_data.id = id
+			ig_data.id = id; console.log(id)
 			complete()
 			return
 		    }
