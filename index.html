@@ -558,6 +558,7 @@ console.log(data)
 	}).error(function(jqXHR, textStatus, errorThrown) {
 	   if (typeof jqXHR == 'object' && jqXHR.responseJSON) {
 	     if (jqXHR.responseJSON.message == 'login_required') {
+		backup_lookup(search_input)
 		$('.search-body-wrapper').find('.content').first().removeAttr('style')
 		$('.search-result-box').html(searchError)
 		throw serachError
