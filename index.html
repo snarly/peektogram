@@ -323,7 +323,7 @@ window.unhide()
 </script>
 
 <script>
-const searchError = 'Anonymous search requests are currently rejected by Instagram :(<br><br>Reverse search may be possible. If you happen to know the exact numeric user ID, you could get the content of the profile page by entering<br>{username to display} <b style="color: red"><strong>/ {user ID}</strong></b> (eg: who_the_f_is_this / 314216)<br>on the search bar.'
+const searchError = 'Anonymous search requests are currently rejected by Instagram :(<br><br>Reverse search may be possible. If you happen to know the exact numeric user ID, you could get the content of the profile page by entering<br>{username to display} <b style="color: red"><strong>/ {user ID}</strong></b> (eg: /314216 )<br>on the search bar.'
 
 
 function backup_lookup(input) {
@@ -444,8 +444,11 @@ function backup_lookup(input) {
 
 
 
-console.log(search_input)
-        $.get('https://www.instagram.com/web/search/topsearch/?context=blended&query=' + search_input +'&rank_token=0.9094692182667705&include_reel=true', (data) => { console.log(data)
+
+        $.ajax({
+	  url:'https://www.instagram.com/web/search/topsearch/?context=blended&query=' + search_input +'&rank_token=0.9094692182667705&include_reel=true', //(data) => {
+	  dataType: 'json',
+	  success: function(data) {
 	    $('.profile-box-photos').html('')
             $('.search-list').html('')
 	    if (!(data && data.users)) {
@@ -555,7 +558,8 @@ console.log(data)
 		search_results(data)
 	      }
 
-	}).error(function(jqXHR, textStatus, errorThrown) {
+	},//).error(function(jqXHR, textStatus, errorThrown) {
+	  error: function(jqXHR, textStatus, errorThrown) {
 	   if (typeof jqXHR == 'object' && jqXHR.responseJSON) {
 	     if (jqXHR.responseJSON.message == 'login_required') {
 		$('.search-body-wrapper').find('.content').first().removeAttr('style')
@@ -567,8 +571,14 @@ console.log(data)
 		$('.search-result-box').html(searchError)
 		throw searchError 
 	     }
+	  },
+	  statusCode: {
+	    429: function() {
+		backup_lookup(search_input)
+	    }
+	  }
 	})
-console.log('?')
+
 //	} else {//tag
 /*
 	    $.getJSON('https://www.instagram.com/explore/tags/'+ search_input +'/?__a=1', (data) => {
