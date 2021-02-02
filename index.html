@@ -445,7 +445,7 @@ function backup_lookup(input) {
 
 
 
-        $.get('https://www.instagram.com/web/search/topsearch/?context=blended&query=' + search_input +'&rank_token=0.9094692182667705&include_reel=true', (data) => { console.log(data)
+        $.get('https://www.instagram.com/web/search/topsearch/?context=blended&query=' + search_input +'&rank_token=0.9094692182667705&include_reel=true', (data) => {
 	    $('.profile-box-photos').html('')
             $('.search-list').html('')
 	    if (!(data && data.users)) {
@@ -555,7 +555,7 @@ console.log(data)
 		search_results(data)
 	      }
 
-	}).error(function(jqXHR, textStatus, errorThrown) { console.log(jqXHR); console.log(textStatus); console.log(errorThrown)
+	}).error(function(jqXHR, textStatus, errorThrown) {
 	   if (typeof jqXHR == 'object' && jqXHR.responseJSON) {
 	     if (jqXHR.responseJSON.message == 'login_required') {
 		$('.search-body-wrapper').find('.content').first().removeAttr('style')
@@ -1106,12 +1106,12 @@ if (window.page == 'profile') {
 
 		  complete()
 
-		}).error(function(jqXHR, textStatus, errorThrown) {
+		}).error(function(jqXHR, textStatus, errorThrown) {console.log('B'); console.log(jqXHR); console.log(textStatus); console.log(errorThrown)
 		   complete()
 		})
 	      }
 	    })
-        }).error(function(jqXHR, textStatus, errorThrown) {
+        }).error(function(jqXHR, textStatus, errorThrown) { console.log('A'); console.log(jqXHR); console.log(textStatus); console.log(errorThrown)
 	    	complete()
 	    })
 
