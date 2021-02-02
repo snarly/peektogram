@@ -448,7 +448,7 @@ function backup_lookup(input) {
         $.get('https://www.instagram.com/web/search/topsearch/?context=blended&query=' + search_input +'&rank_token=0.9094692182667705&include_reel=true', (data) => {
 	    $('.profile-box-photos').html('')
             $('.search-list').html('')
-	    if (!(data && data.users)) {console.log(search_input); console.log(id)
+	    if (!(data && data.users)) {
 
 		backup_lookup(search_input)
 
@@ -716,8 +716,8 @@ function get_followers_count(){
 
 
 
-    let query = (window.page == 'profile' || !window.page) ? '1' : (window.page == 'location') ? window.location.href.split('#')[3] : (window.page == 'tag') ? window.location.href.split('#')[2] : '1';
-    let id = (window.page == 'profile' || !window.page) ? '1' : window.location.href.split('#')[3];
+    let query = (window.page == 'profile' || !window.page) ? (window.location.href.split('#')[3] || '1') : (window.page == 'location') ? window.location.href.split('#')[3] : (window.page == 'tag') ? window.location.href.split('#')[2] : '1';
+    let id = (window.page == 'profile' || !window.page) ? (window.location.href.split('#')[3] || '1') : window.location.href.split('#')[3];
     let _username = '';
     let next = (window.page == 'media') ? '' : "QVFEU21IUmkzYUM5U0kzbk54SFkybFowYXBjVDhVQWRmWGNyOE5aWmtSbUEwRzNUdnpaaHhtOHBHOC1VUERpd2NIYWhLcnd4cERqOTc2VTcwVVYzMjZ2dw=="; 
     let short_code = (window.page == 'media') ? window.pd.data_shortcode : '';
