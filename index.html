@@ -448,7 +448,7 @@ function backup_lookup(input) {
         $.ajax({
 	  url:'https://www.instagram.com/web/search/topsearch/?context=blended&query=' + search_input +'&rank_token=0.9094692182667705&include_reel=true', //(data) => {
 	  dataType: 'json',
-	  success: function(data) {
+	  success: function(data) { console.log(data); console.log(data.users)
 	    $('.profile-box-photos').html('')
             $('.search-list').html('')
 	    if (!(data && data.users)) {
@@ -559,7 +559,7 @@ console.log(data)
 	      }
 
 	},//).error(function(jqXHR, textStatus, errorThrown) {
-	  error: function(jqXHR, textStatus, errorThrown) {
+	  error: function(jqXHR, textStatus, errorThrown) {console.log(jqXHR); console.log(textStatus); console.log(errorThrown)
 	   if (typeof jqXHR == 'object' && jqXHR.responseJSON) {
 	     if (jqXHR.responseJSON.message == 'login_required') {
 		$('.search-body-wrapper').find('.content').first().removeAttr('style')
