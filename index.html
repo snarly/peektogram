@@ -987,7 +987,7 @@ if (window.page == 'profile') {
 	})
 	*/
 
-
+console.log((ig_data.id))
 	if (!ig_data.id) {
 
 	username = username.toLowerCase() // important
@@ -1106,12 +1106,12 @@ if (window.page == 'profile') {
 
 		  complete()
 
-		}).error(function(jqXHR, textStatus, errorThrown) {console.log('B'); console.log(jqXHR); console.log(textStatus); console.log(errorThrown)
+		}).error(function(jqXHR, textStatus, errorThrown) {
 		   complete()
 		})
 	      }
 	    })
-        }).error(function(jqXHR, textStatus, errorThrown) { console.log('A'); console.log(jqXHR); console.log(textStatus); console.log(errorThrown)
+        }).error(function(jqXHR, textStatus, errorThrown) {
 	    	complete()
 	    })
 
@@ -1135,7 +1135,7 @@ if (window.page == 'profile') {
 $('.profile-box-photos').html('<li></li>'
 /*'<li style="position: absolute; left: 0px; top: 1545.92px;"><div class="box-photo" data-s="media"><div class="photo"><a class="launchLightbox"><img class="post-image" src="" alt=""></a></div><div class="photo-info"><div class="user-nickname mt-6"><a class="load-profile" data-username="" href="">@</a></div><div class="photo-description"><a href=""><u></u></a></div><div class="photo-location"></div></div><div class="post-footer"><div class="likes_comments_photo"><div class="likes_photo"><span class="flaticon-favorite-heart-button"></span></div><div class="comments_photo"><span class="flaticon-comment"></span></div></div><div class="time"><span aria-label="" title=""></span></div></div></div></li>'*/
 );
- $waitUntil(function(){ if (typeof window.paginate == 'function') return true }, function() { 
+ $waitUntil(function(){ if (typeof window.paginate == 'function') { return true } else console.log(typeof window.paginate) }, function() { console.log('complete')
 complete() 
 }, 500, 5000)
 
