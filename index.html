@@ -445,7 +445,7 @@ function backup_lookup(input) {
 
 
 
-        $.get('https://www.instagram.com/web/search/topsearch/?context=blended&query=' + search_input +'&rank_token=0.9094692182667705&include_reel=true', (data) => {
+        $.get('https://www.instagram.com/web/search/topsearch/?context=blended&query=' + search_input +'&rank_token=0.9094692182667705&include_reel=true', (data) => { console.log(data)
 	    $('.profile-box-photos').html('')
             $('.search-list').html('')
 	    if (!(data && data.users)) {
@@ -555,10 +555,9 @@ console.log(data)
 		search_results(data)
 	      }
 
-	}).error(function(jqXHR, textStatus, errorThrown) {
+	}).error(function(jqXHR, textStatus, errorThrown) { console.log(jqXHR); console.log(textStatus); console.log(errorThrown)
 	   if (typeof jqXHR == 'object' && jqXHR.responseJSON) {
 	     if (jqXHR.responseJSON.message == 'login_required') {
-		backup_lookup(search_input)
 		$('.search-body-wrapper').find('.content').first().removeAttr('style')
 		$('.search-result-box').html(searchError)
 		throw serachError
