@@ -2066,9 +2066,9 @@ $(document).ready(function () {
 		beforeSend: setHeader
 	    }).error(function(jqXHR, textStatus, errorThrown) {*/
 
-	if (window.page == 'profile') {
+	if (window.page == 'profile') {//api.imgkoa.com, api.pixwox.com
 
-	    $.getJSON('https://api.codetabs.com/v1/proxy/?quest=https://api.imgkoa.com/posts?userid=' + id + '&next=' + Next, function(data) { console.log('api.codetabs.com proxy data\n'+data)
+	    $.getJSON('https://api.codetabs.com/v1/proxy/?quest=https://api.pixwox.com/posts?userid=' + id + '&next=' + Next, function(data) { //console.log('api.codetabs.com proxy data'); console.log(data)
 
 	    var obj
 	    if (window.page == 'profile') {
@@ -2125,7 +2125,7 @@ $(document).ready(function () {
 			display_resources = '',
                         caption_mormal = '';
                     //if ($.isEmptyObject(item['node'].id) == false) id = item['node'].id;
-                    short_code = 1 * (item.shortcode) //shortcode_(item.shortcode);
+                    short_code = item.shortcode; //console.log(item.shortcode); //shortcode_(item.shortcode);
 		    //if (window.page != 'profile' && $.isEmptyObject(item['node'].owner) == false) username = '/'+ item['node'].owner.id;
                     //if ($.isEmptyObject(item['node'].location) == false) location = item['node'].location;
 		    img = item.thum;
