@@ -448,7 +448,7 @@ function backup_lookup(input) {
         $.get('https://www.instagram.com/web/search/topsearch/?context=blended&query=' + search_input +'&rank_token=0.9094692182667705&include_reel=true', (data) => {
 	    $('.profile-box-photos').html('')
             $('.search-list').html('')
-	    if (!(data && data.users)) {
+	    if (!(data && data.users)) {console.log(search_input); console.log(id)
 
 		backup_lookup(search_input)
 
@@ -995,7 +995,7 @@ if (window.page == 'profile') {
 						//'https://www.instagram.com/web/search/topsearch/?query=' + username;
         $.get(answer_url, function(data){ //console.log(data) // search results for username
 
-		var z = (location.href.split('#')[3]) ? (1 * location.href.split('#')[3]) : null; console.log(z); console.log(typeof z)
+		var z = (location.href.split('#')[3]) ? (1 * location.href.split('#')[3]) : null
 		if (!(data && data.users) || (window.page == 'profile' && typeof z == 'number')) {
 		  if (typeof z != 'number') {
 
@@ -1008,7 +1008,7 @@ if (window.page == 'profile') {
 			id =  location.href.split('#')[3]
 			_username = location.href.split('#')[2]
 			ig_data.username = _username
-			ig_data.id = id; console.log(id)
+			ig_data.id = id
 			complete()
 			return
 		    }
