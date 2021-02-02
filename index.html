@@ -444,8 +444,8 @@ function backup_lookup(input) {
 
 
 
-
-        $.get('https://www.instagram.com/web/search/topsearch/?context=blended&query=' + search_input +'&rank_token=0.9094692182667705&include_reel=true', (data) => {
+console.log(search_input)
+        $.get('https://www.instagram.com/web/search/topsearch/?context=blended&query=' + search_input +'&rank_token=0.9094692182667705&include_reel=true', (data) => { console.log(data)
 	    $('.profile-box-photos').html('')
             $('.search-list').html('')
 	    if (!(data && data.users)) {
@@ -568,7 +568,7 @@ console.log(data)
 		throw searchError 
 	     }
 	})
-
+console.log('?')
 //	} else {//tag
 /*
 	    $.getJSON('https://www.instagram.com/explore/tags/'+ search_input +'/?__a=1', (data) => {
@@ -987,7 +987,7 @@ if (window.page == 'profile') {
 	})
 	*/
 
-console.log((ig_data.id))
+
 	if (!ig_data.id) {
 
 	username = username.toLowerCase() // important
@@ -1135,7 +1135,7 @@ console.log((ig_data.id))
 $('.profile-box-photos').html('<li></li>'
 /*'<li style="position: absolute; left: 0px; top: 1545.92px;"><div class="box-photo" data-s="media"><div class="photo"><a class="launchLightbox"><img class="post-image" src="" alt=""></a></div><div class="photo-info"><div class="user-nickname mt-6"><a class="load-profile" data-username="" href="">@</a></div><div class="photo-description"><a href=""><u></u></a></div><div class="photo-location"></div></div><div class="post-footer"><div class="likes_comments_photo"><div class="likes_photo"><span class="flaticon-favorite-heart-button"></span></div><div class="comments_photo"><span class="flaticon-comment"></span></div></div><div class="time"><span aria-label="" title=""></span></div></div></div></li>'*/
 );
- $waitUntil(function(){ if (typeof window.paginate == 'function') { return true } else console.log(typeof window.paginate) }, function() { console.log('complete')
+ $waitUntil(function(){ if (typeof window.paginate == 'function') return true }, function() { 
 complete() 
 }, 500, 5000)
 
