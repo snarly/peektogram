@@ -323,7 +323,44 @@ window.unhide()
 </script>
 
 <script>
-const searchError = 'Anonymous search requests are currently rejected by Instagram :(<br><br>Reverse search may be possible. If you happen to know the exact numeric user ID, you could get the content of the profile page by entering<br>{username to display} <b style="color: red"><strong>/ {user ID}</strong></b><br>on the search bar.'
+const searchError = 'Anonymous search requests are currently rejected by Instagram :(<br><br>Reverse search may be possible. If you happen to know the exact numeric user ID, you could get the content of the profile page by entering<br>{username to display} <b style="color: red"><strong>/ {user ID}</strong></b> (eg: who_the_f_is_this / 314216)<br>on the search bar.'
+
+
+function backup_lookup(input) {
+
+/*
+	      function setHeader(xhr) {
+		xhr.setRequestHeader('Access-Control-Allow-Headers','Origin, X-Requested-With, Content-Type, Accept, User-Agent, Referer, Credentials')
+		//xhr.setRequestHeader('User-Agent', 'Instagram 1.1.1')				// works only in Firefox, others need a useragent switcher
+		xhr.setRequestHeader('Referer', 'https://www.instagram.com/')		// ajax call will only return relevant data if sent from this domain while logged in
+		xhr.setRequestHeader('Access-Control-Allow-Origin', 'https://www.instagram.com')
+		xhr.setRequestHeader('Access-Control-Allow-Credentials', 'true')
+		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
+		xhr.setRequestHeader('Authority', 'www.instagram.com')
+		xhr.setRequestHeader('Origin', 'www.instagram.com')
+	      }*/
+
+		var xhr = new XMLHttpRequest()
+		xhr.open('get', 'https://api.codetabs.com/v1/proxy/?quest=https://www.pixwox.com/profile/'+ encodeURIComponent(input.toLowerCase().replace(/(\r\n|\n|\r)/gm," ").split(' ').join('')) + '/', true)
+		xhr.onreadystatechange = function() {//console.log(xhr.status +' '+xhr.readyState)//https://api.imgkoa.com/posts?userid=198945880&next=
+		  if (xhr.readyState == 4 && xhr.status == 200) {
+		    //console.log(xhr.responseText)
+		    if (xhr.responseText.split('name="userid" value="')[1]) {
+			id = xhr.responseText.split('name="userid" value="')[1].split('"')[0]; sessionStorage.setItem('search-id', id)
+			_username = xhr.responseText.split('name="username" value="')[1].split('"')[0]; sessionStorage.setItem('search-username', _username)
+			sessionStorage.setItem('search-full_name', xhr.responseText.split('<h1 class="fullname">')[1].split('<')[0])
+			sessionStorage.setItem('search-profile_pic', xhr.responseText.split('@' + _username + '" class="lazyload" data-src="')[1].split('"')[0])
+			sessionStorage.setItem('search-verified', ((xhr.responseText.split('<span title="Verified account"')[1]) ? true : false))
+			//next = xhr.responseText.split('class="more_btn" data-next="')[1]; if (next) next = next.split('"')[0]
+			window.location.href = site_url.substring(0,site_url.length-1) + '#profile#' + _username
+		    }
+		  }
+		}
+		//setHeader(xhr)
+		xhr.send('')
+
+}
+
 
     $(function () {
 
@@ -379,7 +416,7 @@ const searchError = 'Anonymous search requests are currently rejected by Instagr
                         '        </div>');
                 });
             } else {
-                $('#search-profile-results').append('<div class="no_search_result">0 results for ' + search_input + '</div>');
+                $('#search-profile-results').append('<div class="no_search_result">0 profile results for ' + search_input + '</div>');
             }
 
             if (data.hashtags.length > 0) {
@@ -387,7 +424,7 @@ const searchError = 'Anonymous search requests are currently rejected by Instagr
                     $('#search-tags-results').append('<a href="'+ site_url.substring(0,site_url.length-1) +'#tag#' + element.hashtag.name + '#' + element.hashtag.id + '" onclick="sessionStorage.setItem(&quot;tag-name&quot;, &quot;'+ element.hashtag.name +'&quot;); sessionStorage.setItem(&quot;tag-id&quot;, &quot;'+ element.hashtag.id +'&quot;) "oncontextmenu="(function(){ var z = document.getElementById(\'search-input\'); if (z) { z.value = \'tag#'+ element.hashtag.name +'/'+ element.hashtag.id +'\';} })();">' + element.hashtag.name + '</a>'); //+ '#' + element.hashtag.id 
                 })
             } else {
-                $('#search-tags-results').append('<div class="no_search_result">0 results for ' + search_input + '</div>');
+                $('#search-tags-results').append('<div class="no_search_result">0 hashtag results for ' + search_input + '</div>');
             }
 
             if (data.places.length > 0) {
@@ -395,7 +432,7 @@ const searchError = 'Anonymous search requests are currently rejected by Instagr
                     $('#search-locations-results').append('<a href="'+ site_url.substring(0,site_url.length-1) +'#location#' + element.place.slug + '#' + element.place.location.pk + '" onclick="sessionStorage.setItem(&quot;data-location-id&quot;, &quot;'+ element.place.location.pk + '&quot;); sessionStorage.setItem(&quot;data-location-name&quot;, &quot;'+ (element.place.subtitle || element.place.title) + '&quot;);" oncontextmenu="(function(){ var z = document.getElementById(\'search-input\'); if (z) { z.value = \'location#'+ element.place.slug +'/'+ element.place.location.pk +'\';} })();">' + element.place.title + '</a>');
                 })
 	    } else {
-                $('#search-locations-results').append('<div class="no_search_result">0 results for ' + search_input + '</div>');
+                $('#search-locations-results').append('<div class="no_search_result">0 location results for ' + search_input + '</div>');
             }
 
 	    }
@@ -412,27 +449,8 @@ const searchError = 'Anonymous search requests are currently rejected by Instagr
 	    $('.profile-box-photos').html('')
             $('.search-list').html('')
 	    if (!(data && data.users)) {
-/*
-	      function setHeader(xhr) {
-		xhr.setRequestHeader('Access-Control-Allow-Headers','Origin, X-Requested-With, Content-Type, Accept, User-Agent, Referer, Credentials')
-		//xhr.setRequestHeader('User-Agent', 'Instagram 1.1.1')				// works only in Firefox, others need a useragent switcher
-		xhr.setRequestHeader('Referer', 'https://www.instagram.com/')		// ajax call will only return relevant data if sent from this domain while logged in
-		xhr.setRequestHeader('Access-Control-Allow-Origin', 'https://www.instagram.com')
-		xhr.setRequestHeader('Access-Control-Allow-Credentials', 'true')
-		xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
-		xhr.setRequestHeader('Authority', 'www.instagram.com')
-		xhr.setRequestHeader('Origin', 'www.instagram.com')
-	      }
 
-		var xhr = new XMLHttpRequest()
-		xhr.open('get', 'https://api.codetabs.com/v1/proxy/?quest=https://api.imgkoa.com/search?username='+ encodeURIComponent(search_input), true)
-		xhr.onreadystatechange = function() {console.log(xhr.status +' '+xhr.readyState)//https://api.imgkoa.com/posts?userid=198945880&next=
-		  if (xhr.readyState == 4 && xhr.status == 200) {
-		    console.log(xhr.responseText)
-		  }
-		}
-		//setHeader(xhr)
-		xhr.send('')*/
+		backup_lookup(search_input)
 
 		//$.getJSON(site_url + 'app/igdb.js', function(data){
 		$.ajax({
@@ -448,7 +466,7 @@ const searchError = 'Anonymous search requests are currently rejected by Instagr
 		    withCredentials: true
 		},*/
 		success: function (data) {
-		    var users = data.users, locations = data.locations, i,
+		    var users = data.users, locations = data.locations, hashtags = data.hashtags, i,
 			data = {}; data.users = []; data.places = []; data.hashtags = []
 		    for(i=0;i<users.length;i=i+2) if (users[i+1].toLowerCase().replace(/(\r\n|\n|\r)/gm," ").split(' ').join('').indexOf(search_input.toLowerCase().replace(/(\r\n|\n|\r)/gm," ").split(' ').join('')) > -1) {
 			data.users[i] = {}
@@ -462,8 +480,8 @@ const searchError = 'Anonymous search requests are currently rejected by Instagr
 		    }
 		    for(i=0;i<hashtags.length;i=i+2) if (hashtags[i+1].toLowerCase().replace(/(\r\n|\n|\r)/gm," ").split(' ').join('').indexOf(search_input.toLowerCase().replace(/(\r\n|\n|\r)/gm," ").split(' ').join('')) > -1) {
 			data.hashtags[i] = {}
-			data.hashtag[i].hashtag = {}
-			data.hashtag[i].hashtag = { "id": hashtags[i], "name": hashgtags[i+1] }
+			data.hashtags[i].hashtag = {}
+			data.hashtags[i].hashtag = { "id": hashtags[i], "name": hashtags[i+1] }
 		    }
 		    search_results(data)
 		}//,
@@ -471,7 +489,7 @@ const searchError = 'Anonymous search requests are currently rejected by Instagr
 		
 
 		}).error(function(jqXHR, textStatus, errorThrown) {
-			//console.log(jqXHR); console.log(textStatus); console.log(errorThrown)
+			console.log(jqXHR); console.log(textStatus); console.log(errorThrown)
 		//})
 
 
@@ -969,8 +987,10 @@ if (window.page == 'profile') {
 	})
 	*/
 
+
 	if (!ig_data.id) {
 
+	username = username.toLowerCase() // important
         var answer_url = 'https://www.instagram.com/web/search/topsearch/?context=blended&query=' + username + '&rank_token=0.9094692182667705&include_reel=true'
 						//'https://www.instagram.com/web/search/topsearch/?query=' + username;
         $.get(answer_url, function(data){ //console.log(data) // search results for username
@@ -978,6 +998,8 @@ if (window.page == 'profile') {
 		var z = (location.href.split('#')[3]) ? (1 * location.href.split('#')[3]) : null
 		if (!(data && data.users) || (window.page == 'profile' && typeof z == 'number')) {
 		  if (typeof z != 'number') {
+
+		    backup_lookup(username)
 		    $('.search-body-wrapper').find('.content').first().removeAttr('style')
 		    $('.search-result-box').html(searchError)
 		    throw searchError
