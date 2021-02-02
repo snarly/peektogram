@@ -567,6 +567,7 @@ console.log(data)
 		throw serachError
 	     } else console.log(jqXHR)
 	   } else {
+		backup_lookup(search_input)
 		$('.search-body-wrapper').find('.content').first().removeAttr('style')
 		$('.search-result-box').html(searchError)
 		throw searchError 
