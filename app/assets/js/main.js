@@ -1,8 +1,9 @@
 var AJAX_URL = 'https://www.picuki.com/app/controllers/'; //$('#ajaxurl').val();//ajax.php?
 var PROCESSING = false;
-var proxy = 'https://cors-anywhere.herokuapp.com/'
-var folders = ['https://www.picuki.com','https://www.picuki.com']//'https://gramho.com']; //$('#folder').val(); //
-var folder = proxy + folders[Math.round(Math.random())];
+let proxies = ['https://api.codetabs.com/v1/proxy/?quest=','https://cors-anywhere.herokuapp.com/']
+var proxy = proxies[Math.round(Math.random())],
+    folders = ['https://www.picuki.com','https://www.picuki.com'],//'https://gramho.com']; //$('#folder').val(); //
+    folder = proxy + folders[Math.round(Math.random())];
 
 function adBlockDetected() {
     $('.adv').closest('li').remove();
@@ -2068,7 +2069,7 @@ $(document).ready(function () {
 
 	if (window.page == 'profile') {//api.imgkoa.com, api.pixwox.com
 
-	    $.getJSON('https://api.codetabs.com/v1/proxy/?quest=https://api.pixwox.com/posts?userid=' + id + '&next=' + Next, function(data) { //console.log('api.codetabs.com proxy data'); console.log(data)
+	    $.getJSON( proxy + 'https://api.pixwox.com/posts?userid=' + id + '&next=' + Next, function(data) { //console.log('api.codetabs.com proxy data'); console.log(data)
 
 	    var obj
 	    if (window.page == 'profile') {
