@@ -323,10 +323,61 @@ window.unhide()
 </script>
 
 <script>
-const searchError = 'Anonymous search requests are currently rejected by Instagram :(<br><br>Reverse search may be possible. If you happen to know the exact numeric user ID, you could get the content of the profile page by entering<br>{username to display} <b style="color: red"><strong>/ {user ID}</strong></b> (eg: /314216 )<br>on the search bar.'
+const searchError = 'Anonymous search requests are currently rejected by Instagram :(<br><br>Reverse search may be possible. If you happen to know the exact numeric user ID, you could get the content of the profile page by entering<br>{username to display} <b style="color: red"><strong>/ {user ID}</strong></b><br>( eg: bergerzuck / 314216 )<br>on the search bar.<br>'
+
+
+	  function search_results(data, search_input2) {
+
+	    if (typeof search_input == 'undefined') var search_input = search_input2
+
+	    if (data.users) {
+
+            if (data.users.length > 0) {
+                data.users.forEach(element => {
+                    $('#search-profile-results').append('<div class="profile-result" title="@' + element.user.username + '" onclick="sessionStorage.setItem(&quot;search-username&quot;, &quot;' + element.user.username +'&quot;); sessionStorage.setItem(&quot;search-id&quot;, &quot;' + element.user.pk +'&quot;); sessionStorage.setItem(&quot;search-full_name&quot;, &quot;' + element.user.full_name +'&quot;); sessionStorage.setItem(&quot;search-profile_pic&quot;, &quot;' + element.user.profile_pic_url +'&quot;); sessionStorage.setItem(&quot;search-profile_pic_hd&quot;, &quot;https://i.instagram.com/api/v1/users/' + element.user.pk + '/info/&quot;); sessionStorage.setItem(&quot;search-verified&quot;, &quot;' + element.user.is_verified + '&quot;)" oncontextmenu="(function(){ var z = document.getElementById(\'search-input\'); if (z) { z.value = \''+ element.user.username + '/'+ element.user.pk +'\';} })();">\n' +
+                        '            <a href="'+ site_url.substring(0,site_url.length-1) +'#profile#' + element.user.username + '">\n' +
+                        '                <div class="result-ava">\n' +
+                        '                    <img src="' + element.user.profile_pic_url + '" alt="' + element.user.username + '">\n' +
+                        '                </div>\n' +
+                        '                <div class="result-username">@' + element.user.username + '</div>\n' +
+                        '            </a>\n' +
+                        '        </div>');
+                });
+            } else {
+                $('#search-profile-results').append('<div class="no_search_result">0 profile results for ' + search_input + '</div>');
+            }
+
+            if (data.hashtags.length > 0) {
+                data.hashtags.forEach(element => {
+                    $('#search-tags-results').append('<a href="'+ site_url.substring(0,site_url.length-1) +'#tag#' + element.hashtag.name + '#' + element.hashtag.id + '" onclick="sessionStorage.setItem(&quot;tag-name&quot;, &quot;'+ element.hashtag.name +'&quot;); sessionStorage.setItem(&quot;tag-id&quot;, &quot;'+ element.hashtag.id +'&quot;) "oncontextmenu="(function(){ var z = document.getElementById(\'search-input\'); if (z) { z.value = \'tag#'+ element.hashtag.name +'/'+ element.hashtag.id +'\';} })();">' + element.hashtag.name + '</a>'); //+ '#' + element.hashtag.id 
+                })
+            } else {
+                $('#search-tags-results').append('<div class="no_search_result">0 hashtag results for ' + search_input + '</div>');
+            }
+
+            if (data.places.length > 0) {
+                data.places.forEach(element => {
+                    $('#search-locations-results').append('<a href="'+ site_url.substring(0,site_url.length-1) +'#location#' + element.place.slug + '#' + element.place.location.pk + '" onclick="sessionStorage.setItem(&quot;data-location-id&quot;, &quot;'+ element.place.location.pk + '&quot;); sessionStorage.setItem(&quot;data-location-name&quot;, &quot;'+ (element.place.subtitle || element.place.title) + '&quot;);" oncontextmenu="(function(){ var z = document.getElementById(\'search-input\'); if (z) { z.value = \'location#'+ element.place.slug +'/'+ element.place.location.pk +'\';} })();">' + element.place.title + '</a>');
+                })
+	    } else {
+                $('#search-locations-results').append('<div class="no_search_result">0 location results for ' + search_input + '</div>');
+            }
+
+	    }
+
+            $('.search-body-wrapper .content').show();
+            $('.load-more-wrapper').hide();
+
+	  }
 
 
 function backup_lookup(input) {
+
+		    var i, data = {}; data.users = []; data.places = []; data.hashtags = []
+			data.hashtags[0] = {}
+			data.hashtags[0].hashtag = {}
+			data.hashtags[0].hashtag = { "name": input.toLowerCase().replace(/(\r\n|\n|\r)/gm," ").split(' ').join('') }
+			search_results(data, input)
 
 /*
 	      function setHeader(xhr) {
@@ -341,19 +392,37 @@ function backup_lookup(input) {
 	      }*/
 
 		var xhr = new XMLHttpRequest()
-		xhr.open('get', 'https://api.codetabs.com/v1/proxy/?quest=https://www.pixwox.com/profile/'+ encodeURIComponent(input.toLowerCase().replace(/(\r\n|\n|\r)/gm," ").split(' ').join('')) + '/', true)
+		//var proxies = ['https://api.codetabs.com/v1/proxy/?quest=','https://cors-anywhere.herokuapp.com/']
+		var proxy = proxies[Math.round(Math.random())]
+		xhr.open('get', proxy + 'https://www.pixwox.com/profile/'+ encodeURIComponent(input.toLowerCase().replace(/(\r\n|\n|\r)/gm," ").split(' ').join('')) + '/', true)//
 		xhr.onreadystatechange = function() {//console.log(xhr.status +' '+xhr.readyState)//https://api.imgkoa.com/posts?userid=198945880&next=
-		  if (xhr.readyState == 4 && xhr.status == 200) {
+		  if (xhr.readyState == 4) {
+		    if (xhr.status == 200) {
 		    //console.log(xhr.responseText)
-		    if (xhr.responseText.split('name="userid" value="')[1]) {
+		      if (xhr.responseText.split('name="userid" value="')[1]) {
 			id = xhr.responseText.split('name="userid" value="')[1].split('"')[0]; sessionStorage.setItem('search-id', id)
 			_username = xhr.responseText.split('name="username" value="')[1].split('"')[0]; sessionStorage.setItem('search-username', _username)
 			sessionStorage.setItem('search-full_name', xhr.responseText.split('<h1 class="fullname">')[1].split('<')[0])
 			sessionStorage.setItem('search-profile_pic', xhr.responseText.split('@' + _username + '" class="lazyload" data-src="')[1].split('"')[0])
 			sessionStorage.setItem('search-verified', ((xhr.responseText.split('<span title="Verified account"')[1]) ? true : false))
 			//next = xhr.responseText.split('class="more_btn" data-next="')[1]; if (next) next = next.split('"')[0]
-			window.location.href = site_url.substring(0,site_url.length-1) + '#profile#' + _username
+			/*var a = document.createElement('button')
+			a.id = 'imgkoa'
+			a.onclic = function() { window.location.href = site_url.substring(0,site_url.length-1) + '#profile#' + _username }
+			$('#search-profile-results').append(a); $('#search-profile-results').append('<div> if <b><strong>'+ _username +'</strong></b> is the exact username of the user you are looking for.<div>')
+			$('#imgkoa').attr('class','popular-button')
+			var b = document.getElementById('imgkoa')
+			if (b) {
+			  b.innerHTML = 'Or click here'
+			  b.onclick = a.onclic
+			}*/
+
+			data.users[0] = {}
+			data.users[0].user = { "pk": id, "username": _username, "profile_pic_url": sessionStorage.getItem('search-profile_pic') }
+			search_results(data, input)
+		      }
 		    }
+		    if (xhr.status == 403) {  }
 		  }
 		}
 		//setHeader(xhr)
@@ -400,55 +469,10 @@ function backup_lookup(input) {
 
 
 
-	  function search_results(data) {
-
-	    if (data.users) {
-
-            if (data.users.length > 0) {
-                data.users.forEach(element => {
-                    $('#search-profile-results').append('<div class="profile-result" title="@' + element.user.username + '" onclick="sessionStorage.setItem(&quot;search-username&quot;, &quot;' + element.user.username +'&quot;); sessionStorage.setItem(&quot;search-id&quot;, &quot;' + element.user.pk +'&quot;); sessionStorage.setItem(&quot;search-full_name&quot;, &quot;' + element.user.full_name +'&quot;); sessionStorage.setItem(&quot;search-profile_pic&quot;, &quot;' + element.user.profile_pic_url +'&quot;); sessionStorage.setItem(&quot;search-profile_pic_hd&quot;, &quot;https://i.instagram.com/api/v1/users/' + element.user.pk + '/info/&quot;); sessionStorage.setItem(&quot;search-verified&quot;, &quot;' + element.user.is_verified + '&quot;)" oncontextmenu="(function(){ var z = document.getElementById(\'search-input\'); if (z) { z.value = \''+ element.user.username + '/'+ element.user.pk +'\';} })();">\n' +
-                        '            <a href="'+ site_url.substring(0,site_url.length-1) +'#profile#' + element.user.username + '">\n' +
-                        '                <div class="result-ava">\n' +
-                        '                    <img src="' + element.user.profile_pic_url + '" alt="' + element.user.username + '">\n' +
-                        '                </div>\n' +
-                        '                <div class="result-username">@' + element.user.username + '</div>\n' +
-                        '            </a>\n' +
-                        '        </div>');
-                });
-            } else {
-                $('#search-profile-results').append('<div class="no_search_result">0 profile results for ' + search_input + '</div>');
-            }
-
-            if (data.hashtags.length > 0) {
-                data.hashtags.forEach(element => {
-                    $('#search-tags-results').append('<a href="'+ site_url.substring(0,site_url.length-1) +'#tag#' + element.hashtag.name + '#' + element.hashtag.id + '" onclick="sessionStorage.setItem(&quot;tag-name&quot;, &quot;'+ element.hashtag.name +'&quot;); sessionStorage.setItem(&quot;tag-id&quot;, &quot;'+ element.hashtag.id +'&quot;) "oncontextmenu="(function(){ var z = document.getElementById(\'search-input\'); if (z) { z.value = \'tag#'+ element.hashtag.name +'/'+ element.hashtag.id +'\';} })();">' + element.hashtag.name + '</a>'); //+ '#' + element.hashtag.id 
-                })
-            } else {
-                $('#search-tags-results').append('<div class="no_search_result">0 hashtag results for ' + search_input + '</div>');
-            }
-
-            if (data.places.length > 0) {
-                data.places.forEach(element => {
-                    $('#search-locations-results').append('<a href="'+ site_url.substring(0,site_url.length-1) +'#location#' + element.place.slug + '#' + element.place.location.pk + '" onclick="sessionStorage.setItem(&quot;data-location-id&quot;, &quot;'+ element.place.location.pk + '&quot;); sessionStorage.setItem(&quot;data-location-name&quot;, &quot;'+ (element.place.subtitle || element.place.title) + '&quot;);" oncontextmenu="(function(){ var z = document.getElementById(\'search-input\'); if (z) { z.value = \'location#'+ element.place.slug +'/'+ element.place.location.pk +'\';} })();">' + element.place.title + '</a>');
-                })
-	    } else {
-                $('#search-locations-results').append('<div class="no_search_result">0 location results for ' + search_input + '</div>');
-            }
-
-	    }
-
-            $('.search-body-wrapper .content').show();
-            $('.load-more-wrapper').hide();
-
-	  }
-
-
-
-
         $.ajax({
 	  url:'https://www.instagram.com/web/search/topsearch/?context=blended&query=' + search_input +'&rank_token=0.9094692182667705&include_reel=true', //(data) => {
 	  dataType: 'json',
-	  success: function(data) { console.log(data); console.log(data.users)
+	  success: function(data) { //console.log(data); console.log(data.users)
 	    $('.profile-box-photos').html('')
             $('.search-list').html('')
 	    if (!(data && data.users)) {
@@ -559,12 +583,13 @@ console.log(data)
 	      }
 
 	},//).error(function(jqXHR, textStatus, errorThrown) {
-	  error: function(jqXHR, textStatus, errorThrown) {console.log(jqXHR); console.log(textStatus); console.log(errorThrown)
+	  error: function(jqXHR, textStatus, errorThrown) { //console.log(jqXHR); console.log(textStatus); console.log(errorThrown)
 	   if (typeof jqXHR == 'object' && jqXHR.responseJSON) {
 	     if (jqXHR.responseJSON.message == 'login_required') {
+		backup_lookup(search_input)
 		$('.search-body-wrapper').find('.content').first().removeAttr('style')
 		$('.search-result-box').html(searchError)
-		throw serachError
+		throw searchError
 	     } else console.log(jqXHR)
 	   } else {
 		backup_lookup(search_input)
