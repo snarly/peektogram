@@ -1,6 +1,6 @@
 var AJAX_URL = 'https://www.picuki.com/app/controllers/'; //$('#ajaxurl').val();//ajax.php?
 var PROCESSING = false;
-let proxies = ['https://api.codetabs.com/v1/proxy/?quest=','https://cors-anywhere.herokuapp.com/']
+let proxies = ['https://api.codetabs.com/v1/proxy/?quest=']//,'https://cors-anywhere.herokuapp.com/']
 var proxy = proxies[Math.round(Math.random())],
     folders = ['https://www.picuki.com','https://www.picuki.com'],//'https://gramho.com']; //$('#folder').val(); //
     folder = proxy + folders[Math.round(Math.random())];
@@ -2139,7 +2139,7 @@ $(document).ready(function () {
 			  var sc = item.children_items, i
 			  for (i=0; i < sc.length; i++) {
 			    if ($.isEmptyObject(sc[i].pic) == false) {
-			      display_resources = display_resources + '###' + sc[i].pic +'#'+ sc[i].pic_w +'x'+ sc[i].pic_h +';'
+			      display_resources = ((display_resources && display_resources.split('##')[1] && sc[i].pic && sc[i].pic.indexOf(display_resources.split('##')[0]) > -1) ? sc[i].pic : display_resources + '###' + sc[i].pic) +'#'+ sc[i].pic_w +'x'+ sc[i].pic_h +';'
 				img = img +';'+ sc[i].thum
 			    }
 			  }
@@ -2155,7 +2155,7 @@ $(document).ready(function () {
                     //if ($.isEmptyObject(item.sum) == false) {
                         caption = item.sum;
                         caption_mormal = item.sum_pure;
-                        //caption = caption.replace(/(\#[A-Za-z_0-9.]+\b)/gi, '<a href="' + site_url.substring(0,site_url.length-1) + '#tag$1"><u>$1</u></a>')
+                        caption = caption.replace(/(\#[A-Za-z_0-9.]+\b)/gi, '<a href="' + site_url.substring(0,site_url.length-1) + '#tag$1"><u>$1</u></a>')
                         caption = caption.replace(/(\@[A-Za-z_0-9.]+\b)/gi, '<a href="' + site_url + 'profile/$1"><u>$1</u></a>').split('/profile/@').join('#profile#')
                         caption = caption.replace(user_reg, 'profile/');
                         //caption = caption.split('<a href="/tag/').join('<a href="' + site_url.substring(0,site_url.length-1) + '#tag#')
@@ -2197,6 +2197,7 @@ $(document).ready(function () {
 	    $('.search-body-wrapper').find('.content').first().removeAttr('style')
 	    var z = (window.page == 'location') ? 'location feed' : 'user feed'
 	    var z = 'Anonymous ' + z + ' request rate limited.'
+	    if (!isNaN((1 * query)) && window.page == 'profile') z = z + ' An ID number was specified, so reloading the page may serve you the content eventually.'
 	    $('.search-result-box').html(z)
 	    throw z
             //$.post(folder + "/app/controllers/ajax.php", {update_request: 'js_error', type: 'load_more'});
@@ -2320,6 +2321,12 @@ $(document).ready(function () {
         });
     }
 
+    $(document).on('click', '.show_stories_button', function() {
+        stories(query);
+    });
+    $(document).on('click', '.no_stories svg', function() {
+        $(this).closest('.content').remove();
+    });
 
         let first = false;
 	function paginate() {
@@ -2383,11 +2390,12 @@ $(document).ready(function () {
 	}
 	if (window.page == 'profile' || window.page == 'location')
         $(window).scroll(function() {
-	  paginate()
+	  if (window.page == 'profile' || window.page == 'location')
+	    paginate()
         });
 
         let has_story = false;
-	function stories() {
+	function stories(query) {
 
 	if (window.page == 'profile' && window.page0)
         $.getJSON('https://www.instagram.com/graphql/query/?query_hash=ad99dd9d3646cc3c0dda65debcd266a7&variables={"user_id":"' + query + '","include_chaining":false,"include_reel":false,"include_suggested_users":false,"include_logged_out_extras":true,"include_highlight_reels":false,"include_related_profiles":true,"include_live_status":false}', function(data) {
@@ -2397,7 +2405,7 @@ $(document).ready(function () {
 	        return;
 	    }
 	    //$.post(folder + "/app/controllers/ajax.php", {update_request: 'js_success'});
-	    $.post(folder + "/app/controllers/ajax.php", {query: query, type: "story"}, function (data) {
+	    $.post( proxy + "https://www.picuki.com/app/controllers/ajax.php", {query: query, type: "story"}, function (data) {console.log(data)
 		data = JSON.parse(data);
 		if (data.stories_title !== '') {
 		    has_story = true;
@@ -2675,19 +2683,23 @@ $(document).ready(function () {
         } else {
 	    var z = _this.attr('data-display-resources'); if (z) z = z.split('###')
 	    if (z && z.length > 1) {
+	      var height; try {
+		height = parseInt((window.innerHeight || document.documentElement.clientHeight || yt6.body.clientHeight) - 100)//_this.attr('data-display-resources').split('###')[0].split(';')[0].split('#')[1].split('x')[1]
+	      } catch(e) {}
 	      $('#lightbox').html(
-		'<table style="display: inline-block; overflow-y: scroll; max-height: 640px"><tbody>\n'+
+		'<table style="display: inline-block; overflow-y: scroll; max-height: ' + height + 'px"><tbody>\n'+
 		(function(){ var z = '', i; for(i=0;i < _this.attr('data-display-resources').split('###').length; i++) z = z +
 				'<tr><img class="lightbox-image" src="'+ _this.attr('data-display-resources').split('###')[i].split(';')[0] +'"></tr>\n'
 		return z; })() +
 		'</tbody></table>'
 	      );
 	      $('#lightbox').find('tr').each(function(i){ $(this).append($('#lightbox').find('img').first()) });
-	      $('.lightbox-image').first().load(function(){ $('#lightbox').find('table').attr('style','display: inline-block; overflow-y: scroll; max-height: '+ $("#lightbox").outerWidth() +'px' ) });
+	      $('.lightbox-image').first().load(function(){ $('#lightbox').find('table').attr('style','display: inline-block; overflow-y: scroll; max-height: '+ (height || $("#lightbox").outerHeight()) +'px' ) });
 	    } else if (z) {
 		$('#lightbox').html('<img src="'+ $(this).attr('data-display-resources').split('###')[$(this).attr('data-index')].split(';')[0] +'">');
-	      } else
-		$('#lightbox').html('<img src="'+ $(this).attr('href') +'">');
+	      } else {
+		  $('#lightbox').html('<iframe src="'+ $(this).attr('href') +'" style="width: 280px; height: 180px">');
+		}
         }
         $('.lightbox').imagesLoaded().done( function() {
             if (stories === 'stories') {
@@ -2790,6 +2802,9 @@ $(document).ready(function () {
         }
 
 	var elem = $('[href="'+ url +'"]').first()
+	if (elem && elem[0] && typeof elem[0].className == 'string' && elem[0].className.indexOf('profile-hd-link') > -1) {//profile pic
+		  window.open('https://i.instagram.com/api/v1/users/'+ ig_data.id +'/info/0/', '_blank').focus();
+	} else 
 	if ( elem.attr('data-window-page-url') ) {
 	  var z = ['data-post-type','data-shortcode','data-username','data-video-poster','href','data-location-id','data-location-name','data-location-slug','data-time','data-likes','data-comments','data-display-resources','data-caption'], i
 	  for(i=0;i < z.length;i++) if (z[i]) { sessionStorage.setItem(z[i], elem.attr(z[i])); localStorage.setItem(z[i], elem.attr(z[i])) }
